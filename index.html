@@ -68,8 +68,30 @@
             <!-- Start Screen -->
             <div id="start-screen">
                 <h1 class="text-3xl font-bold text-center mb-2">英単語クイズ</h1>
-                <p class="text-center text-slate-400 mb-8">日本語の意味に合う英単語を入力してください。</p>
+                <p class="text-center text-slate-400 mb-6">学習状況を確認してクイズを始めよう！</p>
+                
+                <div id="mastery-stats" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-8">
+                    <div>
+                        <p class="text-2xl font-bold text-sky-400" id="unattempted-count">0</p>
+                        <p class="text-xs text-slate-400">未実施</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-red-400" id="unlearned-count">0</p>
+                        <p class="text-xs text-slate-400">未習得</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-amber-400" id="checking-count">0</p>
+                        <p class="text-xs text-slate-400">点検中</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-green-400" id="mastered-count">0</p>
+                        <p class="text-xs text-slate-400">習得</p>
+                    </div>
+                </div>
+
                 <button id="start-btn" class="btn btn-primary w-full">クイズを開始</button>
+                <button id="reset-btn" class="btn btn-secondary w-full mt-4 !bg-red-800 hover:!bg-red-700">学習履歴をリセット</button>
+                <div id="reset-feedback" class="text-center text-green-400 mt-4 text-sm h-5"></div>
             </div>
 
             <!-- Quiz Screen -->
@@ -128,6 +150,8 @@
         const checkBtn = document.getElementById('check-btn');
         const nextBtn = document.getElementById('next-btn');
         const playAgainBtn = document.getElementById('play-again-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const resetFeedback = document.getElementById('reset-feedback');
         const questionCounter = document.getElementById('question-counter');
         const japaneseWord = document.getElementById('japanese-word');
         const userInput = document.getElementById('user-input');
@@ -138,7 +162,12 @@
         const resultsList = document.getElementById('results-list');
         const downloadCsvBtn = document.getElementById('download-csv-btn');
         const downloadPdfBtn = document.getElementById('download-pdf-btn');
+        const unattemptedCountEl = document.getElementById('unattempted-count');
+        const unlearnedCountEl = document.getElementById('unlearned-count');
+        const checkingCountEl = document.getElementById('checking-count');
+        const masteredCountEl = document.getElementById('mastered-count');
 
+        // Note: All spellings were checked and deemed correct.
         const BUILT_IN_WORDS = [
             { english: "interest", japanese: "利益；利子；重要性；興味" }, { english: "aggressive", japanese: "攻撃的な；積極的な" }, { english: "attack", japanese: "攻撃；非難；発作" }, { english: "hostile", japanese: "敵意を持った；相反する" }, { english: "kick", japanese: "蹴る" }, { english: "clothes", japanese: "衣服" }, { english: "laundry", japanese: "洗濯物；クリーニング屋" }, { english: "needle", japanese: "針" }, { english: "reduction", japanese: "減少" }, { english: "diminish", japanese: "減少させる" }, { english: "discount", japanese: "割引率；割引する；軽視する" }, { english: "helpful", japanese: "親切な；役に立つ" }, { english: "useless", japanese: "役に立たない" }, { english: "selfish", japanese: "利己的な" }, { english: "youth", japanese: "若者；若さ；青年時代" }, { english: "expose", japanese: "さらす；暴露する" }, { english: "shelter", japanese: "保護する；住まい；避難所" }, { english: "male", japanese: "男性の；雄の" }, { english: "prefer", japanese: "を好む" }, { english: "shoot", japanese: "撃つ" }, { english: "adventure", japanese: "冒険" }, { english: "venture", japanese: "冒険的事業；思い切って～する" }, { english: "expedition", japanese: "遠征；探検隊；小旅行" }, { english: "strategy", japanese: "戦略；方策" }, { english: "survey", japanese: "調査；概観" }, { english: "profile", japanese: "の概略を示す；輪郭；横顔" }, { english: "board", japanese: "板；委員会；に搭乗する" }, { english: "sail", japanese: "航行する；帆；航海" }, { english: "electronic", japanese: "電子(工学)の" }, { english: "automatic", japanese: "自動の；無意識的認識" }, { english: "digital", japanese: "デジタル式の" }, { english: "opportunity", japanese: "機会" }, { english: "occasion", japanese: "機会；行事；場合" }, { english: "chance", japanese: "機会；偶然；見込み" }, { english: "career", japanese: "職業；経歴" }, { english: "sale", japanese: "販売；売上層；特売" }, { english: "retail", japanese: "小売り" }, { english: "note", japanese: "に言及する；に注意する；に気づく；メモ；注釈；紙幣" }, { english: "cash", japanese: "現金" }, { english: "purse", japanese: "財布；ハンドバッグ" }, { english: "wallet", japanese: "札入れ" }, { english: "communication", japanese: "伝達；意思疎通；通信" }, { english: "chat", japanese: "おしゃべり" }, { english: "cooperation", japanese: "協力" }, { english: "joint", japanese: "共同の；接合；継ぎ目；関節" }, { english: "rather", japanese: "むしろ；かなり；やや" }, { english: "billion", japanese: "10億" }, { english: "indication", japanese: "兆候；指示" }, { english: "engage", japanese: "(他)引き付ける；雇う；従事させる；婚約させる" }, { english: "contract", japanese: "を契約する；(病気に)かかる；を縮める；契約書" }, { english: "promise", japanese: "約束する；約束；見込み" }, { english: "frontier", japanese: "未開拓分野；最先端；国境；辺境" }, { english: "border", japanese: "境界；国境" }, { english: "boundary", japanese: "境界線；限界" }, { english: "transfer", japanese: "を移動させる；を転勤させる；乗り換える；転任する" }, { english: "transplant", japanese: "を移動させる；を移植する" }, { english: "fascinate", japanese: "を魅了する" }, { english: "innovative", japanese: "革新的な" }, { english: "conclude", japanese: "と結論づける；を終える" }, { english: "uniform", japanese: "同一の；均等の" }, { english: "union", japanese: "連合；組合" }, { english: "unit", japanese: "1個；1人；単位" }, { english: "bilingual", japanese: "2か国語を話す人" }, { english: "triangle", japanese: "三角形" }, { english: "approach", japanese: "取り組み方；接近方法；近づく" }, { english: "positive", japanese: "よい；肯定的な；積極的な；確信して" }, { english: "negative", japanese: "悪い；否定的な；消極的な" }, { english: "quick", japanese: "素早い" }, { english: "willing", japanese: "～する気がある；喜んで行う" }, { english: "reluctant", japanese: "気の進まない" }, { english: "responsibility", japanese: "責任" }, { english: "undertake", japanese: "を引き受ける；に着手する" }, { english: "commit", japanese: "(真剣に)かかわる；犯す" }, { english: "crime", japanese: "犯罪" }, { english: "guilty", japanese: "罪悪感を覚える；有罪の" }, { english: "innocent", japanese: "無罪の；無邪気な" }, { english: "position", japanese: "立場；状況；姿勢；位置" }, { english: "pose", japanese: "をもたらす；ポーズをとる" }, { english: "opinion", japanese: "意見" }, { english: "difficulty", japanese: "困難さ" }, { english: "ease", japanese: "容易さ；安楽さ；を和らげる；を取り除く" }, { english: "flexible", japanese: "柔軟な" }, { english: "rigid", japanese: "堅い；厳格な" }, { english: "view", japanese: "見解；眺め；視野；を見る；を考える" }, { english: "perspective", japanese: "観点；遠近法；見通し" }, { english: "landscape", japanese: "風景" }, { english: "scene", japanese: "光景；場面；現場" }, { english: "arise", japanese: "起きる；起因する" }, { english: "derive", japanese: "由来する；を得る" }, { english: "stem", japanese: "生じる；由来する；茎" }, { english: "lead", japanese: "通じる；を導く；を率いる；(生活)を送る；首位；先導" }, { english: "guide", japanese: "案内する；指導する；案内人；指導者；指針" }, { english: "delay", japanese: "遅延；延期；のろのろする" }, { english: "postpone", japanese: "を延期する" }, { english: "prolong", japanese: "を延長する" }, { english: "highlight", japanese: "を強調する；に光を当てる" }, { english: "shadow", japanese: "影" }, { english: "shade", japanese: "陰；色合い" }, { english: "clever", japanese: "利口な；器用な" }, { english: "decade", japanese: "10年間" }, { english: "millennium", japanese: "1000年" }, { english: "railroad", japanese: "鉄道(線路)" }, { english: "railway", japanese: "鉄道" }, { english: "vital", japanese: "不可欠な；致命的な；生き生きした" }, { english: "center", japanese: "中心；中央" }, { english: "core", japanese: "中心；核心；果物の芯" }, { english: "reverse", japanese: "を逆にする；を一変させる" }, { english: "automobile", japanese: "自動車" }, { english: "wheel", japanese: "(自動車の)ハンドル；車輪" }, { english: "countryside", japanese: "地方；田舎；田園地帯" }, { english: "rural", japanese: "田舎の" }, { english: "urban", japanese: "都市の" }, { english: "downtown", japanese: "町の中心街" }, { english: "suburb", japanese: "郊外" }, { english: "largely", japanese: "ほとんど；主として" }, { english: "mainly", japanese: "主として" }, { english: "sweep", japanese: "一掃する；掃除；殺到する" }, { english: "miss", japanese: "を逃す；がいなくて寂しく思う；失敗" }, { english: "loss", japanese: "紛失；損害；死；敗北" }, { english: "remain", japanese: "依然～のままである；～にとどまる；残り；遺跡" }, { english: "stick", japanese: "固執する；くっつく；刺さる；行き詰まる；貼り付ける：刺す；棒切れ" }, { english: "archaeologist", japanese: "考古学者" }, { english: "market", japanese: "市場" }, { english: "device", japanese: "機器" }, { english: "screen", japanese: "《テレビなどの》画面" }, { english: "power", japanese: "能力" }, { english: "originate", japanese: "生じる；起こる；起源がある" }, { english: "of all time", japanese: "今までで(一番～だ)＜成句＞" }, { english: "producer", japanese: "製造者；生産者" }, { english: "struggle", japanese: "もがく；あがく" }, { english: "employ", japanese: "～を雇う" }, { english: "maintain", japanese: "～を整備(保守)する" }, { english: "mechanical", japanese: "機械の；機械仕掛けの" }, { english: "success", japanese: "うまくいった事；大当たり" }, { english: "in charge of", japanese: "～の担当で＜成句＞" }, { english: "competitor", japanese: "競争相手；競合企業" }, { english: "break through", japanese: "突破する；成功する＜成句＞" }, { english: "inspiration", japanese: "素晴らしい発想；ひらめき" }, { english: "kill time", japanese: "何かを待ちながら空いた時間をつぶす＜成句＞" }, { english: "budget", japanese: "予算" }, { english: "hit upon", japanese: "～をふと思いつく＜成句＞" }, { english: "physician", japanese: "医者；内科医" }, { english: "whereas", japanese: "～だが一方；～であるのに" }, { english: "improvement", japanese: "改善；改良" }, { english: "present", japanese: "現在" }, { english: "creativity", japanese: "創造性" }, { english: "refer", japanese: "～を表す；示す" }, { english: "available", japanese: "入手できる" }, { english: "reasonable", japanese: "《価格が》手頃な" }, { english: "be in use", japanese: "使われている＜成句＞" }, { english: "corporation", japanese: "企業；株式会社" }, { english: "competition", japanese: "競争" }, { english: "drive", japanese: "《経済や市場など》を動かす" }, { english: "equip", japanese: "～を備え付ける；装備する" }, { english: "control", japanese: "制御" }, { english: "movement", japanese: "動き" }, { english: "revolution", japanese: "革命" }, { english: "adopt", japanese: "～を採用する；取り入れる" }, { english: "component", japanese: "部品；構成要素" }, { english: "accessible", japanese: "利用できる" }, { english: "come together", japanese: "《人が》集まる＜成句＞" }, { english: "come out on top", japanese: "トップに立つ；戦いに勝つ＜成句＞" }, { english: "a touch of", japanese: "ほんの少しの～＜成句＞" }, { english: "pass away", japanese: "亡くなる＜成句＞" }, { english: "just as", japanese: "～する時；～と同時に＜成句＞" }, { english: "be about to do", japanese: "まさに～するところである＜成句＞" }, { english: "reflect", japanese: "～を反映する" }, { english: "innovation", japanese: "革新；新しいアイディア" }, { english: "globe", japanese: "世界；地球；地球儀" },
         ];
@@ -175,9 +204,16 @@
         }
 
         // --- App Functions ---
-        function loadMasteryStatus() {
-            const savedStatus = getCookie("wordMasteryStatus");
-            masteryStatus = savedStatus || {};
+        function updateMasteryStats() {
+            const counts = { '未実施': 0, '未習得': 0, '点検中': 0, '習得': 0 };
+            allWords.forEach(word => {
+                const status = masteryStatus[word.id] || '未実施';
+                counts[status]++;
+            });
+            unattemptedCountEl.textContent = counts['未実施'];
+            unlearnedCountEl.textContent = counts['未習得'];
+            checkingCountEl.textContent = counts['点検中'];
+            masteredCountEl.textContent = counts['習得'];
         }
 
         function saveMasteryStatus() {
@@ -185,9 +221,6 @@
         }
         
         function initializeApp() {
-             const uniqueWords = [];
-            const seen = new Set();
-            // 意味が複数ある単語を統合
             const wordMap = new Map();
             BUILT_IN_WORDS.forEach(word => {
                 if (wordMap.has(word.english)) {
@@ -197,15 +230,27 @@
                     wordMap.set(word.english, { ...word });
                 }
             });
-
             allWords = Array.from(wordMap.values()).map((word, index) => ({ ...word, id: index }));
-
 
             if (allWords.length === 0) {
                 startScreen.innerHTML = `<p class="text-center text-red-400">単語データが見つかりません。</p>`;
                 return;
             }
-            loadMasteryStatus();
+
+            const savedStatus = getCookie("wordMasteryStatus") || {};
+            const validatedStatus = {};
+            const validIds = new Set(allWords.map(w => w.id));
+            for (const id in savedStatus) {
+                if (Object.prototype.hasOwnProperty.call(savedStatus, id)) {
+                    if (validIds.has(parseInt(id, 10))) {
+                        validatedStatus[id] = savedStatus[id];
+                    }
+                }
+            }
+            masteryStatus = validatedStatus;
+            saveMasteryStatus();
+
+            updateMasteryStats();
             QUIZ_LENGTH = Math.min(10, allWords.length);
             startBtn.textContent = `クイズを開始 (ランダム${QUIZ_LENGTH}問)`;
         }
@@ -234,20 +279,14 @@
             const priorityPool = [...unattempted, ...unlearned];
             
             QUIZ_LENGTH = Math.min(10, allWords.length);
-
             let questionPool = [];
             
-            // 優先プールから問題を追加
             questionPool.push(...priorityPool);
-            
-            // 問題数が足りなければ点検中プールから追加
             if (questionPool.length < QUIZ_LENGTH) {
-                questionPool.push(...checking);
+                questionPool.push(...shuffleArray(checking));
             }
-
-            // それでも問題数が足りなければ習得済みプールから追加
             if (questionPool.length < QUIZ_LENGTH) {
-                questionPool.push(...mastered);
+                questionPool.push(...shuffleArray(mastered));
             }
             
             quizWords = shuffleArray(questionPool).slice(0, QUIZ_LENGTH);
@@ -299,6 +338,7 @@
                 } else if (currentStatus === '点検中') {
                     masteryStatus[wordId] = '習得';
                 }
+                // If status is '習得', it remains '習得'. No change needed.
             } else {
                 feedback.innerHTML = `<p class="text-red-400 font-bold text-lg">不正解...</p><p class="text-slate-300">正解は: <span class="font-bold">${correctAnswer}</span></p>`;
                 masteryStatus[wordId] = '未習得';
@@ -344,6 +384,18 @@
                 resultsList.appendChild(item);
             });
         }
+
+        function resetHistory() {
+            if (confirm('本当に学習履歴をすべてリセットしますか？この操作は元に戻せません。')) {
+                masteryStatus = {};
+                saveMasteryStatus();
+                updateMasteryStats();
+                resetFeedback.textContent = '学習履歴をリセットしました。';
+                setTimeout(() => {
+                    resetFeedback.textContent = '';
+                }, 2000);
+            }
+        }
         
         function downloadUnlearnedCSV() {
             const unlearnedWords = allWords.filter(word => masteryStatus[word.id] === '未習得');
@@ -382,7 +434,6 @@
             const doc = new jsPDF();
             
             try {
-                 // Google Fonts Noto Sans JP
                 const font_url = "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansjp/NotoSansJP-Regular.ttf";
                 const font_response = await fetch(font_url);
                 const font_blob = await font_response.arrayBuffer();
@@ -420,8 +471,10 @@
         nextBtn.addEventListener('click', nextQuestion);
         playAgainBtn.addEventListener('click', () => {
              resultScreen.classList.add('hidden');
+             updateMasteryStats();
              startScreen.classList.remove('hidden');
         });
+        resetBtn.addEventListener('click', resetHistory);
         downloadCsvBtn.addEventListener('click', downloadUnlearnedCSV);
         downloadPdfBtn.addEventListener('click', downloadUnlearnedPDF);
 
