@@ -131,6 +131,33 @@
         .slider.round:before {
             border-radius: 50%;
         }
+        /* List Screen Specific Styles */
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 9999px;
+            color: white;
+            white-space: nowrap;
+        }
+        .status-unattempted { background-color: #94a3b8; } /* slate-400 */
+        .status-unlearned { background-color: #ef4444; } /* red-500 */
+        .status-checking { background-color: #f59e0b; } /* amber-500 */
+        .status-mastered { background-color: #22c55e; } /* green-500 */
+        
+        .answer-hidden {
+            background-color: var(--text-secondary);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .answer-hidden:hover {
+            opacity: 0.8;
+        }
+        .answer-reveal {
+            background-color: transparent !important;
+            color: var(--text-primary) !important;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -142,11 +169,11 @@
       </label>
     </div>
 
-    <div class="w-full max-w-xl">
+    <div class="w-full max-w-xl h-[90vh] flex flex-col">
         <!-- Main App Container -->
-        <div id="app-container" class="card">
+        <div id="app-container" class="card flex flex-col h-full overflow-hidden relative">
             <!-- Mode Selection Screen -->
-            <div id="mode-selection-screen">
+            <div id="mode-selection-screen" class="overflow-y-auto">
                 <h1 class="text-3xl font-bold text-center mb-2">クイズ選択</h1>
                 <p class="text-center text-secondary mb-8">挑戦するクイズを選んでください。</p>
                 <div class="grid grid-cols-1 gap-4">
@@ -157,7 +184,7 @@
             </div>
 
             <!-- Start Screen (Template) -->
-            <div id="start-screen-template" class="hidden">
+            <div id="start-screen-template" class="hidden flex flex-col h-full overflow-y-auto">
                  <h1 class="start-title text-3xl font-bold text-center mb-2"></h1>
                 <p class="text-center text-secondary mb-6">学習状況を確認してクイズを始めよう！</p>
                 <div class="mastery-stats grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-8"></div>
@@ -165,14 +192,33 @@
                     <button class="start-quiz-btn btn btn-primary w-full" data-length-type="10">ランダム10問</button>
                     <button class="start-quiz-btn btn btn-primary w-full" data-length-type="all">全範囲から出題</button>
                 </div>
+                <button class="view-list-btn btn btn-secondary w-full mb-4 !bg-indigo-600 hover:!bg-indigo-500 text-white">問題一覧を確認</button>
                 <button class="reset-history-btn btn btn-secondary w-full !bg-red-800 hover:!bg-red-700">学習履歴をリセット</button>
                 <button class="back-to-mode-selection btn btn-secondary w-full mt-4">モード選択に戻る</button>
                 <div class="reset-feedback text-center text-green-400 mt-4 text-sm h-5"></div>
             </div>
 
+            <!-- List Screen -->
+            <div id="list-screen" class="hidden flex flex-col h-full">
+                <div class="mb-4 flex-shrink-0">
+                    <h2 class="text-xl font-bold mb-2"><span id="list-mode-title"></span> 一覧</h2>
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="list-search" placeholder="検索..." class="flex-1 border rounded px-3 py-2 text-slate-800">
+                        <label class="flex items-center space-x-2 cursor-pointer bg-slate-100 dark:bg-slate-700 border border-border-color px-3 py-2 rounded select-none min-w-fit">
+                            <input type="checkbox" id="hide-answers-check" class="form-checkbox h-4 w-4 text-indigo-600">
+                            <span class="text-sm">解答を隠す</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="list-content" class="flex-1 overflow-y-auto space-y-2 pr-1 pb-4">
+                    <!-- List items will be injected here -->
+                </div>
+                <button id="back-from-list-btn" class="btn btn-secondary w-full mt-2 flex-shrink-0">戻る</button>
+            </div>
+
 
             <!-- Quiz Screen -->
-            <div id="quiz-screen" class="hidden">
+            <div id="quiz-screen" class="hidden overflow-y-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h2 id="quiz-title" class="text-xl font-bold">クイズ</h2>
                     <p id="question-counter" class="text-secondary font-medium"></p>
@@ -189,7 +235,7 @@
             </div>
 
             <!-- Result Screen -->
-            <div id="result-screen" class="hidden text-center">
+            <div id="result-screen" class="hidden text-center overflow-y-auto">
                 <h2 class="text-2xl font-bold mb-4">結果発表</h2>
                 <p class="text-5xl font-bold mb-2" id="score-text"></p>
                 <p class="text-secondary mb-6" id="score-message"></p>
@@ -210,7 +256,7 @@
                  <button class="back-to-mode-selection btn btn-secondary w-full mt-4">モード選択に戻る</button>
             </div>
         </div>
-        <footer class="text-center mt-4 text-xs text-secondary">
+        <footer class="text-center mt-4 text-xs text-secondary flex-shrink-0">
             <p>学習を頑張りましょう！</p>
         </footer>
     </div>
@@ -236,7 +282,7 @@
 
     <script>
         // --- DATA ---
-        // 新しいデータセット
+        // データセット
         const DATA_SETS = {
             public: [
                 { id: 21301, question: "裁判所は国会や内閣の干渉を受けないという原則を何というか", answers: ["司法権の独立"] },
@@ -551,6 +597,7 @@
         const startScreenTemplate = document.getElementById('start-screen-template');
         const quizScreen = document.getElementById('quiz-screen');
         const resultScreen = document.getElementById('result-screen');
+        const listScreen = document.getElementById('list-screen');
         
         const quizTitle = document.getElementById('quiz-title');
         const questionCounter = document.getElementById('question-counter');
@@ -574,6 +621,13 @@
         const alertMessage = document.getElementById('alert-message');
         const alertOkBtn = document.getElementById('alert-ok-btn');
         const themeToggle = document.getElementById('checkbox');
+        
+        // List Screen Elements
+        const listModeTitle = document.getElementById('list-mode-title');
+        const listSearch = document.getElementById('list-search');
+        const listContent = document.getElementById('list-content');
+        const hideAnswersCheck = document.getElementById('hide-answers-check');
+        const backFromListBtn = document.getElementById('back-from-list-btn');
 
         // --- LocalStorage Functions ---
         const getLocalStorage = (key) => {
@@ -602,23 +656,17 @@
             return array;
         }
 
-        // 解答の正規化（モードによって処理を変える）
         function normalizeAnswer(str, mode) {
             if (typeof str !== 'string') return '';
-            
-            // 全角文字を半角に変換
             let normalized = str.trim()
                 .replace(/[Ａ-Ｚａ-ｚ０-９．＝－（）『』]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
-                .replace(/　/g, ' ') // 全角スペースを半角に
+                .replace(/　/g, ' ')
                 .replace(/[〜～]/g, '-') 
                 .replace(/＝/g, '=');
 
-            // 英語モード以外なら、すべてのスペースを削除（日本語入力の揺らぎ吸収）
-            // 英語モードなら、単語間のスペースは重要なので残す（ただし前後の空白はtrim済み）
             if (mode !== 'english') {
                 normalized = normalized.replace(/ /g, '');
             } else {
-                // 英語の場合は小文字化するが、内部のスペースは維持する
                 normalized = normalized.toLowerCase();
             }
 
@@ -646,7 +694,7 @@
             const screens = document.querySelectorAll('#app-container > div');
             screens.forEach(s => s.classList.add('hidden'));
             screen.classList.remove('hidden');
-            currentStartScreen = (screen.id.includes('-start-screen')) ? screen : null;
+            currentStartScreen = (screen.id.includes('-start-screen')) ? screen : currentStartScreen;
         }
         
         // --- Mastery and Stats Logic ---
@@ -657,9 +705,12 @@
             screen.querySelector('.mastery-stats').id = `${mode}-mastery-stats`;
             screen.querySelector('.start-quiz-btn[data-length-type="10"]').dataset.mode = mode;
             screen.querySelector('.start-quiz-btn[data-length-type="all"]').dataset.mode = mode;
+            screen.querySelector('.view-list-btn').dataset.mode = mode; // Set mode for list btn
             screen.querySelector('.reset-history-btn').dataset.mode = mode;
             screen.querySelector('.reset-feedback').id = `reset-${mode}-feedback`;
-            appContainer.appendChild(screen);
+            
+            // Insert before list-screen (keep list screen at end or appropriate place)
+            appContainer.insertBefore(screen, listScreen);
         }
 
         function updateMasteryStats(mode) {
@@ -699,80 +750,105 @@
             });
         }
         
-        function downloadUnlearnedCSV() {
-            const data = allData[currentQuizMode];
-            const statusData = masteryStatus[currentQuizMode];
-
-            const unlearnedItems = data.filter(item => statusData[item.id] === '未習得');
-            if (unlearnedItems.length === 0) { showAlertModal("未習得の項目はありません。"); return; }
+        // --- List Screen Logic ---
+        function showListScreen(mode) {
+            currentQuizMode = mode;
+            const titleMap = { english: '英単語クイズ', public: '公共テスト', kobun: '古文単語クイズ' };
+            listModeTitle.textContent = titleMap[mode];
+            listSearch.value = ''; // Reset search
+            hideAnswersCheck.checked = false; // Reset toggle
             
-            let headers, body;
-            switch(currentQuizMode) {
-                case 'english':
-                    headers = "日本語,English\r\n";
-                    body = unlearnedItems.map(item => `"${item.question}","${item.answer}"`).join('\r\n');
-                    break;
-                case 'kobun':
-                    headers = "問題,答え,漢字\r\n";
-                    body = unlearnedItems.map(item => `"${item.question}","${item.answer}","${item.kanji || ''}"`).join('\r\n');
-                    break;
-                case 'public':
-                    headers = "問題,解答\r\n";
-                    body = unlearnedItems.map(item => `"${item.question}","${item.answers.join(' / ')}"`).join('\r\n');
-                    break;
-            }
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers + body;
-
-            const link = document.createElement("a");
-            link.setAttribute("href", encodeURI(csvContent));
-            link.setAttribute("download", `unlearned_${currentQuizMode}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            renderListContent(mode);
+            showScreen(listScreen);
         }
-
-        async function downloadUnlearnedPDF() {
-            const data = allData[currentQuizMode];
-            const statusData = masteryStatus[currentQuizMode];
+        
+        function renderListContent(mode, filterText = '') {
+            const data = allData[mode];
+            const statusData = masteryStatus[mode];
             
-            const unlearnedItems = data.filter(item => statusData[item.id] === '未習得');
-            if (unlearnedItems.length === 0) { showAlertModal("未習得の項目はありません。"); return; }
+            listContent.innerHTML = '';
+            
+            // Filter data
+            const filteredData = data.filter(item => {
+                if (!filterText) return true;
+                const lowerFilter = filterText.toLowerCase();
+                const questionMatch = item.question.toLowerCase().includes(lowerFilter);
+                let answerMatch = false;
+                if (mode === 'public') {
+                    answerMatch = item.answers.some(a => a.toLowerCase().includes(lowerFilter));
+                } else {
+                    answerMatch = item.answer.toLowerCase().includes(lowerFilter);
+                }
+                const kanjiMatch = item.kanji && item.kanji.includes(filterText);
+                return questionMatch || answerMatch || kanjiMatch;
+            });
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            try {
-                showAlertModal("PDFを生成中です...");
-                 doc.setFont("Helvetica"); 
-                 let y = 15;
-                 doc.text("Unlearned Items List", 14, y);
-                 y += 10;
-                 
-                 unlearnedItems.forEach(item => {
-                     if (y > 280) { doc.addPage(); y = 15; }
-                     let textLine = '';
-                     switch(currentQuizMode) {
-                        case 'english':
-                            textLine = `${item.question}: ${item.answer}`;
-                            break;
-                        case 'kobun':
-                            textLine = `${item.question}: ${item.answer} [${item.kanji || ''}]`;
-                            break;
-                        default:
-                            textLine = `${item.question}: ${item.answers.join(' / ')}`;
-                            break;
-                     }
-                     const splitText = doc.splitTextToSize(textLine, 180);
-                     doc.text(splitText, 14, y);
-                     y += (splitText.length * 7);
-                 });
-                doc.save(`unlearned_${currentQuizMode}.pdf`);
-            } catch (e) {
-                console.error("PDF生成エラー:", e);
-                showAlertModal("PDFの生成に失敗しました。");
-            } finally {
-                hideAlertModal();
+            if (filteredData.length === 0) {
+                listContent.innerHTML = '<p class="text-center text-secondary py-4">該当する問題がありません。</p>';
+                return;
             }
+
+            const isHideAnswers = hideAnswersCheck.checked;
+
+            filteredData.forEach(item => {
+                const status = statusData[item.id] || '未実施';
+                let statusClass = 'status-unattempted';
+                if (status === '未習得') statusClass = 'status-unlearned';
+                if (status === '点検中') statusClass = 'status-checking';
+                if (status === '習得') statusClass = 'status-mastered';
+                
+                let answerDisplay = '';
+                if (mode === 'public') {
+                    answerDisplay = item.answers.join(' / ');
+                } else {
+                    answerDisplay = item.answer;
+                    if (item.kanji) answerDisplay += ` <span class="text-xs text-secondary">(${item.kanji})</span>`;
+                }
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'bg-secondary border border-border-color rounded p-3 flex flex-col gap-1';
+                
+                // Question Row
+                const questionRow = document.createElement('div');
+                questionRow.className = 'flex justify-between items-start gap-2';
+                questionRow.innerHTML = `
+                    <div class="flex-1 font-medium text-sm sm:text-base">${item.question}</div>
+                    <span class="status-badge ${statusClass} flex-shrink-0">${status}</span>
+                `;
+                itemDiv.appendChild(questionRow);
+                
+                // Answer Row
+                const answerRow = document.createElement('div');
+                answerRow.className = `text-sm mt-1 p-2 ${isHideAnswers ? 'answer-hidden' : 'text-indigo-600 font-bold'}`;
+                answerRow.innerHTML = isHideAnswers ? 'タップして解答を表示' : answerDisplay;
+                
+                if (isHideAnswers) {
+                    answerRow.onclick = function() {
+                        if (this.classList.contains('answer-hidden')) {
+                            this.classList.remove('answer-hidden');
+                            this.classList.add('answer-reveal');
+                            this.innerHTML = answerDisplay;
+                        }
+                    };
+                }
+                
+                itemDiv.appendChild(answerRow);
+                listContent.appendChild(itemDiv);
+            });
         }
+        
+        // List Screen Event Listeners
+        listSearch.addEventListener('input', (e) => {
+            renderListContent(currentQuizMode, e.target.value);
+        });
+        
+        hideAnswersCheck.addEventListener('change', () => {
+             renderListContent(currentQuizMode, listSearch.value);
+        });
+        
+        backFromListBtn.addEventListener('click', () => {
+             showScreen(document.getElementById(`${currentQuizMode}-start-screen`));
+        });
 
         // --- Core Quiz Logic ---
         function startQuiz(mode, lengthType) {
@@ -840,7 +916,6 @@
 
             if (currentQuizMode === 'english' || currentQuizMode === 'kobun') {
                 correctAnswersText = currentItem.answer;
-                // ここでモードごとの正規化を適用
                 isCorrect = normalizeAnswer(userAnswer, currentQuizMode) === normalizeAnswer(correctAnswersText, currentQuizMode);
             } else { // public
                 correctAnswersText = currentItem.answers.join(' / ');
@@ -929,6 +1004,81 @@
             });
         }
         
+        function downloadUnlearnedCSV() {
+            const data = allData[currentQuizMode];
+            const statusData = masteryStatus[currentQuizMode];
+
+            const unlearnedItems = data.filter(item => statusData[item.id] === '未習得');
+            if (unlearnedItems.length === 0) { showAlertModal("未習得の項目はありません。"); return; }
+            
+            let headers, body;
+            switch(currentQuizMode) {
+                case 'english':
+                    headers = "日本語,English\r\n";
+                    body = unlearnedItems.map(item => `"${item.question}","${item.answer}"`).join('\r\n');
+                    break;
+                case 'kobun':
+                    headers = "問題,答え,漢字\r\n";
+                    body = unlearnedItems.map(item => `"${item.question}","${item.answer}","${item.kanji || ''}"`).join('\r\n');
+                    break;
+                case 'public':
+                    headers = "問題,解答\r\n";
+                    body = unlearnedItems.map(item => `"${item.question}","${item.answers.join(' / ')}"`).join('\r\n');
+                    break;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers + body;
+
+            const link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", `unlearned_${currentQuizMode}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function downloadUnlearnedPDF() {
+            const data = allData[currentQuizMode];
+            const statusData = masteryStatus[currentQuizMode];
+            
+            const unlearnedItems = data.filter(item => statusData[item.id] === '未習得');
+            if (unlearnedItems.length === 0) { showAlertModal("未習得の項目はありません。"); return; }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            try {
+                showAlertModal("PDFを生成中です...");
+                 doc.setFont("Helvetica"); 
+                 let y = 15;
+                 doc.text("Unlearned Items List", 14, y);
+                 y += 10;
+                 
+                 unlearnedItems.forEach(item => {
+                     if (y > 280) { doc.addPage(); y = 15; }
+                     let textLine = '';
+                     switch(currentQuizMode) {
+                        case 'english':
+                            textLine = `${item.question}: ${item.answer}`;
+                            break;
+                        case 'kobun':
+                            textLine = `${item.question}: ${item.answer} [${item.kanji || ''}]`;
+                            break;
+                        default:
+                            textLine = `${item.question}: ${item.answers.join(' / ')}`;
+                            break;
+                     }
+                     const splitText = doc.splitTextToSize(textLine, 180);
+                     doc.text(splitText, 14, y);
+                     y += (splitText.length * 7);
+                 });
+                doc.save(`unlearned_${currentQuizMode}.pdf`);
+            } catch (e) {
+                console.error("PDF生成エラー:", e);
+                showAlertModal("PDFの生成に失敗しました。");
+            } finally {
+                hideAlertModal();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             initializeAllData();
             
@@ -945,6 +1095,9 @@
                     const mode = target.dataset.mode;
                     const lengthType = target.dataset.lengthType;
                     startQuiz(mode, lengthType);
+                } else if (target.matches('.view-list-btn')) { // View List Button Click
+                    const mode = target.dataset.mode;
+                    showListScreen(mode);
                 } else if (target.matches('.reset-history-btn')) {
                     const mode = target.dataset.mode;
                     resetHistory(mode);
