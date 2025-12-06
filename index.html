@@ -149,12 +149,10 @@
             <div id="mode-selection-screen">
                 <h1 class="text-3xl font-bold text-center mb-2">クイズ選択</h1>
                 <p class="text-center text-secondary mb-8">挑戦するクイズを選んでください。</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <button data-mode="english" class="mode-select-btn btn btn-primary w-full">英単語クイズ</button>
+                <div class="grid grid-cols-1 gap-4">
                     <button data-mode="public" class="mode-select-btn btn btn-primary w-full">公共テスト</button>
+                    <button data-mode="english" class="mode-select-btn btn btn-primary w-full">英単語クイズ</button>
                     <button data-mode="kobun" class="mode-select-btn btn btn-primary w-full">古文単語クイズ</button>
-                    <button data-mode="worldHistory1" class="mode-select-btn btn btn-primary w-full">世界史①</button>
-                    <button data-mode="worldHistory2" class="mode-select-btn btn btn-primary w-full">世界史②</button>
                 </div>
             </div>
 
@@ -238,163 +236,301 @@
 
     <script>
         // --- DATA ---
+        // 新しいデータセット
         const DATA_SETS = {
-            english: [
-                { answer: "interest", question: "利益；利子；重要性；興味" }, { answer: "aggressive", question: "攻撃的な；積極的な" }, { answer: "attack", question: "攻撃；非難；発作" }, { answer: "hostile", question: "敵意を持った；相反する" }, { answer: "kick", question: "蹴る" }, { answer: "clothes", question: "衣服" }, { answer: "laundry", question: "洗濯物；クリーニング屋" }, { answer: "needle", question: "針" }, { answer: "reduction", question: "減少" }, { answer: "diminish", question: "減少させる" }, { answer: "discount", question: "割引率；割引する；軽視する" }, { answer: "helpful", question: "親切な；役に立つ" }, { answer: "useless", question: "役に立たない" }, { answer: "selfish", question: "利己的な" }, { answer: "youth", question: "若者；若さ；青年時代" }, { answer: "expose", question: "さらす；暴露する" }, { answer: "shelter", question: "保護する；住まい；避難所" }, { answer: "male", question: "男性の；雄の" }, { answer: "prefer", question: "を好む" }, { answer: "shoot", question: "撃つ" }, { answer: "adventure", question: "冒険" }, { answer: "venture", question: "冒険的事業；思い切って～する" }, { answer: "expedition", question: "遠征；探検隊；小旅行" }, { answer: "strategy", question: "戦略；方策" }, { answer: "survey", question: "調査；概観" }, { answer: "profile", question: "の概略を示す；輪郭；横顔" }, { answer: "board", question: "板；委員会；に搭乗する" }, { answer: "sail", question: "航行する；帆；航海" }, { answer: "electronic", question: "電子(工学)の" }, { answer: "automatic", question: "自動の；無意識的認識" }, { answer: "digital", question: "デジタル式の" }, { answer: "opportunity", question: "機会" }, { answer: "occasion", question: "機会；行事；場合" }, { answer: "chance", question: "機会；偶然；見込み" }, { answer: "career", question: "職業；経歴" }, { answer: "sale", question: "販売；売上層；特売" }, { answer: "retail", question: "小売り" }, { answer: "note", question: "に言及する；に注意する；に気づく；メモ；注釈；紙幣" }, { answer: "cash", question: "現金" }, { answer: "purse", question: "財布；ハンドバッグ" }, { answer: "wallet", question: "札入れ" }, { answer: "communication", question: "伝達；意思疎通；通信" }, { answer: "chat", question: "おしゃべり" }, { answer: "cooperation", question: "協力" }, { answer: "joint", question: "共同の；接合；継ぎ目；関節" }, { answer: "rather", question: "むしろ；かなり；やや" }, { answer: "billion", question: "10億" }, { answer: "indication", question: "兆候；指示" }, { answer: "engage", question: "(他)引き付ける；雇う；従事させる；婚約させる" }, { answer: "contract", question: "を契約する；(病気に)かかる；を縮める；契約書" }, { answer: "promise", question: "約束する；約束；見込み" }, { answer: "frontier", question: "未開拓分野；最先端；国境；辺境" }, { answer: "border", question: "境界；国境" }, { answer: "boundary", question: "境界線；限界" }, { answer: "transfer", question: "を移動させる；を転勤させる；乗り換える；転任する" }, { answer: "transplant", question: "を移動させる；を移植する" }, { answer: "fascinate", question: "を魅了する" }, { answer: "innovative", question: "革新的な" }, { answer: "conclude", question: "と結論づける；を終える" }, { answer: "uniform", question: "同一の；均等の" }, { answer: "union", question: "連合；組合" }, { answer: "unit", question: "1個；1人；単位" }, { answer: "bilingual", question: "2か国語を話す人" }, { answer: "triangle", question: "三角形" }, { answer: "approach", question: "取り組み方；接近方法；近づく" }, { answer: "positive", question: "よい；肯定的な；積極的な；確信して" }, { answer: "negative", question: "悪い；否定的な；消極的な" }, { answer: "quick", question: "素早い" }, { answer: "willing", question: "～する気がある；喜んで行う" }, { answer: "reluctant", question: "気の進まない" }, { answer: "responsibility", question: "責任" }, { answer: "undertake", question: "を引き受ける；に着手する" }, { answer: "commit", question: "(真剣に)かかわる；犯す" }, { answer: "crime", question: "犯罪" }, { answer: "guilty", question: "罪悪感を覚える；有罪の" }, { answer: "innocent", question: "無罪の；無邪気な" }, { answer: "position", question: "立場；状況；姿勢；位置" }, { answer: "pose", question: "をもたらす；ポーズをとる" }, { answer: "opinion", question: "意見" }, { answer: "difficulty", question: "困難さ" }, { answer: "ease", question: "容易さ；安楽さ；を和げる；を取り除く" }, { answer: "flexible", question: "柔軟な" }, { answer: "rigid", question: "堅い；厳格な" }, { answer: "view", question: "見解；眺め；視野；を見る；を考える" }, { answer: "perspective", question: "観点；遠近法；見通し" }, { answer: "landscape", question: "風景" }, { answer: "scene", question: "光景；場面；現場" }, { answer: "arise", question: "起きる；起因する" }, { answer: "derive", question: "由来する；を得る" }, { answer: "stem", question: "生じる；由来する；茎" }, { answer: "lead", question: "通じる；を導く；を率いる；(生活)を送る；首位；先導" }, { answer: "guide", question: "案内する；指導する；案内人；指導者；指針" }, { answer: "delay", question: "遅延；延期；のろのろする" }, { answer: "postpone", question: "を延期する" }, { answer: "prolong", question: "を延長する" }, { answer: "highlight", question: "を強調する；に光を当てる" }, { answer: "shadow", question: "影" }, { answer: "shade", question: "陰；色合い" }, { answer: "clever", question: "利口な；器用な" }, { answer: "decade", question: "10年間" }, { answer: "millennium", question: "1000年" }, { answer: "railroad", question: "鉄道(線路)" }, { answer: "railway", question: "鉄道" }, { answer: "vital", question: "不可欠な；致命的な；生き生きした" }, { answer: "center", question: "中心；中央" }, { answer: "core", question: "中心；核心；果物の芯" }, { answer: "reverse", question: "を逆にする；を一変させる" }, { answer: "automobile", question: "自動車" }, { answer: "wheel", question: "(自動車の)ハンドル；車輪" }, { answer: "countryside", question: "地方；田舎；田園地帯" }, { answer: "rural", question: "田舎の" }, { answer: "urban", question: "都市の" }, { answer: "downtown", question: "町の中心街" }, { answer: "suburb", question: "郊外" }, { answer: "largely", question: "ほとんど；主として" }, { answer: "mainly", question: "主として" }, { answer: "sweep", question: "一掃する；掃除；殺到する" }, { answer: "miss", question: "を逃す；がいなくて寂しく思う；失敗" }, { answer: "loss", question: "紛失；損害；死；敗北" }, { answer: "remain", question: "依然～のままである；～にとどまる；残り；遺跡" }, { answer: "stick", question: "固執する；くっつく；刺さる；行き詰まる；貼り付ける：刺す；棒切れ" }, { answer: "archaeologist", question: "考古学者" }, { answer: "market", question: "市場" }, { answer: "device", question: "機器" }, { answer: "screen", question: "《テレビなどの》画面" }, { answer: "power", question: "能力" }, { answer: "originate", question: "生じる；起こる；起源がある" }, { answer: "of all time", question: "今までで(一番～だ)＜成句＞" }, { answer: "producer", question: "製造者；生産者" }, { answer: "struggle", question: "もがく；あがく" }, { answer: "employ", question: "～を雇う" }, { answer: "maintain", question: "～を整備(保守)する" }, { answer: "mechanical", question: "機械の；機械仕掛けの" }, { answer: "success", question: "うまくいった事；大当たり" }, { answer: "in charge of", question: "～の担当で＜成句＞" }, { answer: "competitor", question: "競争相手；競合企業" }, { answer: "break through", question: "突破する；成功する＜成句＞" }, { answer: "inspiration", question: "素晴らしい発想；ひらめき" }, { answer: "kill time", question: "何かを待ちながら空いた時間をつぶす＜成句＞" }, { answer: "budget", question: "予算" }, { answer: "hit upon", question: "～をふと思いつく＜成句＞" }, { answer: "physician", question: "医者；内科医" }, { answer: "whereas", question: "～だが一方；～であるのに" }, { answer: "improvement", question: "改善；改良" }, { answer: "present", question: "現在" }, { answer: "creativity", question: "創造性" }, { answer: "refer", question: "～を表す；示す" }, { answer: "available", question: "入手できる" }, { answer: "reasonable", question: "《価格が》手頃な" }, { answer: "be in use", question: "使われている＜成句＞" }, { answer: "corporation", question: "企業；株式会社" }, { answer: "competition", question: "競争" }, { answer: "drive", question: "《経済や市場など》を動かす" }, { answer: "equip", question: "～を備え付ける；装備する" }, { answer: "control", question: "制御" }, { answer: "movement", question: "動き" }, { answer: "revolution", question: "革命" }, { answer: "adopt", question: "～を採用する；取り入れる" }, { answer: "component", question: "部品；構成要素" }, { answer: "accessible", question: "利用できる" }, { answer: "come together", question: "《人が》集まる＜成句＞" }, { answer: "come out on top", question: "トップに立つ；戦いに勝つ＜成句＞" }, { answer: "a touch of", question: "ほんの少しの～＜成句＞" }, { answer: "pass away", question: "亡くなる＜成句＞" }, { answer: "just as", question: "～する時；～と同時に＜成句＞" }, { answer: "be about to do", question: "まさに～するところである＜成句＞" }, { answer: "reflect", question: "～を反映する" }, { answer: "innovation", question: "革新；新しいアイディア" }, { answer: "globe", question: "世界；地球；地球儀" },
-            ],
             public: [
-                { id: 1301, question: "国王が絶対的な権力をもつ政治体制を何というか", answers: ["絶対王政"] }, { id: 1302, question: "国王の権力は神から授かったものだとする考え方を何というか", answers: ["王権神授説"] }, { id: 1303, question: "市民が国王から政治権力を奪取することを何というか", answers: ["市民革命"] }, { id: 1304, question: "市民が政治の主体となる政治体制を何というか", answers: ["民主政治", "民主主義"] }, { id: 1305, question: "人間が生まれもっている自由で平等に生きる権利を何というか", answers: ["自然権"] }, { id: 1306, question: "契約により権利を譲渡し国家が成立するという考え方を何というか", answers: ["社会契約説"] }, { id: 1307, question: "ホッブズは人間の自然状態をどのように表現したか", answers: ["万人の万人に対する闘争"] }, { id: 1308, question: "アメリカ革命に大きな影響を与えたイギリスの思想家は誰か", answers: ["ロック"] }, { id: 1309, question: "『統治二論』で盛り込まれた、政府に対する国民の権利は何か", answers: ["抵抗権", "革命権"] }, { id: 1310, question: "国民の直接民主主義による合意をルソーは何と呼んだか", answers: ["一般意思"] }, { id: 1311, question: "『法の精神』を著したフランスの思想家は誰か", answers: ["モンテスキュー"] }, { id: 1312, question: "立法、行政、司法の権力が互いに抑制し均衡する仕組みを何というか", answers: ["三権分立"] }, { id: 1313, question: "イギリスのジョン王の権力を制限した文書を何というか", answers: ["マグナカルタ"] }, { id: 1314, question: "イギリスの名誉革命を受けて 1689 年に決議された権利宣言は何か", answers: ["権利章典"] }, { id: 1315, question: "政治権力も法の下にあるとする考え方を何というか", answers: ["法の支配"] }, { id: 1316, question: "1776 年、トマス・ジェファーソンによって起草された宣言は何か", answers: ["アメリカ独立宣言"] }, { id: 1317, question: "フランス人権宣言の３つの理念は何か", answers: ["自由、平等、友愛"] }, { id: 1318, question: "社会権を初めて規定したドイツの憲法は何か", answers: ["ワイマール憲法"] }, { id: 1319, question: "人権に関する世界基準となっている国連で採択された宣言は何か", answers: ["世界人権宣言"] }, { id: 1320, question: "大日本帝国憲法では、主権は誰にあったか", answers: ["天皇"] }, { id: 1321, question: "大日本帝国憲法において、国民が天皇から与えられた地位を何というか", answers: ["臣民"] }, { id: 1322, question: "大日本帝国憲法は当時のどの国の憲法を参考にしてつくられたか", answers: ["ドイツ"] }, { id: 1323, question: "大日本帝国憲法が欽定憲法であるのに対し日本国憲法は何憲法といわれるか", answers: ["民定憲法"] }, { id: 1324, question: "憲法に基づいて政治を行う考え方を何というか", answers: ["立憲主義"] }, { id: 1325, question: "連合国が日本に無条件降伏を迫った宣言は何か", answers: ["ポツダム宣言"] }, { id: 1326, question: "戦後に、新憲法作成を主導したアメリカ人は誰か", answers: ["マッカーサー元帥"] }, { id: 1327, question: "憲法の前文に明記されている国民が権力の主体であるとする考え方を何というか", answers: ["国民主権"] }, { id: 1328, question: "日本国憲法で示される天皇の役割は何と表現されているか", answers: ["象徴"] }, { id: 1329, question: "憲法で「侵すことのできない永久の権利」と保障された権利を何というか", answers: ["基本的人権"] }, { id: 1330, question: "憲法で国権の最高機関と規定されているのはどこか", answers: ["国会"] }, { id: 1331, question: "戦争放棄、戦力の不保持を規定しているのは、憲法の何条か", answers: ["9条"] }, { id: 1332, question: "法律が憲法に違反していないかを審査する権利を何というか", answers: ["違憲審査権"] }, { id: 1333, question: "「憲法の番人」といわれる機関は何か", answers: ["最高裁判所"] }, { id: 1334, question: "憲法改正案を発議するために衆参両議院で必要な賛成票はいくつか", answers: ["3分の2以上"] }, { id: 1335, question: "憲法改正は国会発議の後、何にかけられるか", answers: ["国民投票"] }, { id: 1336, question: "改正に厳格な手続きを必要とする憲法のあり方を何というか", answers: ["硬性憲法"] }, { id: 1337, question: "衆参両院に設置されている憲法について審議する会を何というか", answers: ["憲法審査会"] }, { id: 1338, question: "憲法 13 条にある幸福を求める権利を何というか", answers: ["幸福追求権"] }, { id: 1339, question: "人種や信条、性別その他で差別されない権利を主張する理念を何の平等というか", answers: ["法の下の平等"] }, { id: 1340, question: "同性愛者やトランスジェンダーなどの性的少数者を、頭文字から何と総称するか", answers: ["LGBT"] }, { id: 1341, question: "犯罪に科される刑罰は事前に法律で定めておかなければいけないことを何というか", answers: ["罪刑法定主義"] }, { id: 1342, question: "刑罰には法律に基づく手続きが必要である。これを何というか", answers: ["法廷手続きの保障"] }, { id: 1343, question: "不法逮捕や抑留・拘禁などからの自由を総じて何というか", answers: ["身体の自由"] }, { id: 1344, question: "精神の自由のうち言論・出版など自分の考えを発表する権利を何というか", answers: ["表現の自由"] }, { id: 1345, question: "職業選択の自由、財産権などの自由権を何というか", answers: ["経済活動の自由"] }, { id: 1346, question: "国家に対して人間らしい生活を保障するよう求める権利を何という", answers: ["社会権"] }, { id: 1347, question: "健康で文化的な最低限度の生活を営む権利を何というか", answers: ["生存権"] }, { id: 1348, question: "労働三権とは、団結権、団体交渉権ともう一つは何か", answers: ["団体行動権"] }, { id: 1349, question: "国民の義務は「勤労の義務」と「納税の義務」ともう一つは何か", answers: ["教育を受けさせる義務"] }, { id: 1350, question: "国民の権利はときに制限されるが、その根拠となる原理を何というか", answers: ["公共の福祉"] }, { id: 1351, question: "差別是正のため、必要な範囲内で被差別側を優遇する措置を何というか", answers: ["積極的差別是正措置", "アファーマティブ・アクション"] }, { id: 1352, question: "歴史的な経緯を考慮して正義を規定する考え方を何というか", answers: ["通時的正義"] }, { id: 1353, question: "特定の国籍や民族の人に対する差別的な発言や行動を何というか", answers: ["ヘイトスピーチ"] }, { id: 22301, question: "国家を構成する３つの要素とは、領域、主権と何か", answers: ["国民"] }, { id: 22302, question: "国家や国際社会の成立のきっかけになったといわれる条約は何か", answers: ["ウエストファリア条約"] }, { id: 22303, question: "国の領域とは、領海、領空と、何か", answers: ["領土"] }, { id: 22304, question: "漁業や鉱物資源などの権利がある沿岸 200 海里の海域を何というか", answers: ["排他的経済水域"] }, { id: 22305, question: "第二次世界大戦後、植民地地域で起こった民族統一や独立を求める思想は何か", answers: ["ナショナリズム"] }, { id: 22306, question: "国家の枠を超えて環境保護や人道支援を行う民間組織を何というか", answers: ["NGO", "非政府組織"] }, { id: 22307, question: "国際社会の合意や取り決めは慣習国際法ともう一つは何があるか", answers: ["条約"] }, { id: 22308, question: "「国際法の父」といわれるオランダの法学者は誰か", answers: ["グロティウス"] }, { id: 22309, question: "先進国による植民地支配など、対等でない国家間の取り決めを何というか", answers: ["不平等条約"] }, { id: 22310, question: "海洋の安定的な秩序を定めた国際条約は何か", answers: ["国際海洋法条約"] }, { id: 22311, question: "現在日本がロシアと領有権について交渉中の領土を総称して何というか", answers: ["北方領土"] }, { id: 22312, question: "中国が領有権を主張している日本の領土はどこか", answers: ["尖閣諸島"] }, { id: 22313, question: "竹島に警備隊を常駐させている国はどこか", answers: ["韓国"] }, { id: 22314, question: "領土問題など国家間の紛争を提訴できる国連の司法機関はどこか", answers: ["国際司法裁判所"] }, { id: 22315, question: "重大犯罪に対して個人を訴追できる国連の司法機関はどこか", answers: ["国際刑事裁判所"] }, { id: 22316, question: "2002 年の日朝首脳会談で解決を目指した、北朝鮮との問題は何か", answers: ["日本人拉致問題"] }, { id: 22317, question: "日朝首脳会談当時の日本の総理大臣は誰か", answers: ["小泉純一郎"] }, { id: 22318, question: "終戦 50 年を機に初めて日本の植民地支配の責任を認め謝罪した総理大臣は誰か", answers: ["村山富市"] }, { id: 22401, question: "「戦争の放棄」「戦力の不保持」が記されているのは憲法の何条か", answers: ["9条"] }, { id: 22402, question: "自国を守るために武力を用いる権利を何というか", answers: ["専守防衛", "個別自衛権"] }, { id: 22403, question: "文民が軍隊の最高指揮権を持つことを何というか", answers: ["シビリアンコントロール", "文民統制"] }, { id: 22404, question: "米軍立川飛行場の拡張に反対し駐留米軍の合憲性を問うた事件は何か", answers: ["砂川事件"] }, { id: 22405, question: "自衛隊のミサイル・ナイキ基地建設に反対して周辺住民が提訴した訴訟は何か", answers: ["長沼ナイキ訴訟"] }, { id: 22406, question: "自衛隊の合憲性を判断する際、司法判断保留の根拠とされる考え方は何か", answers: ["統治行為論"] }, { id: 22407, question: "同盟国が攻撃され日本にも危機的な影響がある場合、同盟国とともに武力行使できるという考え方 を何というか", answers: ["集団的自衛権"] }, { id: 22408, question: "日本とアメリカが共同で日本と周辺地域を防衛することを定めた条約は何か", answers: ["日米安全保障条約"] }, { id: 22409, question: "米軍の日本駐留経費の一部を日本が負担することを通称何というか", answers: ["思いやり予算"] }, { id: 22410, question: "犯罪を犯した米軍人に対する特権的な法的地位を定めた協定は何か", answers: ["日米地位協定"] }, { id: 22411, question: "自衛隊の海外派遣が議論されるきっかけとなった 1991 年に起こった戦争は何か", answers: ["湾岸戦争"] }, { id: 22412, question: "国連の平和維持活動への日本の参加を規定した法律は何か", answers: ["PKO協力法", "国連平和維持活動協力法"] }, { id: 22413, question: "2015 年に改正され自衛隊による他国軍の後方支援を日本周辺以外の地域でも行うことを可能にした法律は何か", answers: ["安全保障関連法", "平和安全法制"] }, { id: 22414, question: "2001 年にイスラム過激派組織がアメリカで起こした大規模テロを何というか", answers: ["アメリカ同時多発テロ"] }, { id: 22415, question: "アメリカの対テロ戦争時に自衛隊を派遣するために期限付きで制定された法律は何か", answers: ["テロ対策特別措置法"] }, { id: 22416, question: "イラク戦争時に制定された、期限付きで自衛隊派遣を可能にする法律は何か", answers: ["イラク復興支援特別措置法"] }, { id: 22417, question: "安全保障上の有事に対処するため、2013 年に設置された会議は何か", answers: ["国家安全保障会議"] }, { id: 22418, question: "テロの背景にあると考えられる、自民族の優越性を誇示する思想を何というか", answers: ["エスノセントリズム", "自民族中心主義"] }, { id: 22419, question: "テロ組織へ加担しているとして 2003 年にアメリカがイギリスらとともに始めた戦争は何か", answers: ["イラク戦争"] }, { id: 22420, question: "2011 年、チュニジア、エジプト、リビアなどで起こった民主化運動を何というか", answers: ["アラブの春"] }, { id: 22421, question: "イスラム原理主義を掲げ中東地域で一時大きな勢力を誇った過激派組織を何というか", answers: ["ISIL", "イスラム国"] }, { id: 22422, question: "人種、宗教などを理由に迫害されるおそれがあり国から逃れた人々を何というか", answers: ["難民"] }, { id: 22423, question: "加盟国に難民を保護する義務を定めた条約は何か", answers: ["難民の地位に関する条約", "難民条約"] }, { id: 22424, question: "難民救済の活動を行う国連機関は何か", answers: ["国連難民高等弁務官事務所", "UNHCR"] }, { id: 22425, question: "アフリカで氏族間の抗争から長期にわたって無政府状態が続いている紛争は何か", answers: ["ソマリア内戦"] }, { id: 22426, question: "「核兵器をもたず・つくらず・もちこませず」を表明した原則を何というか", answers: ["非核三原則"] }, { id: 22427, question: "世界で唯一、戦争被爆国である国はどこか", answers: ["日本"] }, { id: 22428, question: "原子力の平和利用と軍事転用の禁止を目的に設置された国連機関は何か", answers: ["国際原子力機関", "IAEA"] }, { id: 22429, question: "2017 年に国連で採択された核兵器の全面禁止と根絶を目指す条約は何か", answers: ["核兵器禁止条約"] }, { id: 22501, question: "第二次世界大戦後の 1951 年に締結した、日本が主権回復した条約は何か", answers: ["サンフランシスコ平和条約"] }, { id: 22502, question: "1956 年にソ連と国交を回復した宣言は何か", answers: ["日ソ共同宣言"] }, { id: 22503, question: "第一次世界大戦後の 1920 年に発足した国家連合組織は何か", answers: ["国際連盟"] }, { id: 22504, question: "集団安全保障を強化するために設置された国連の機関は何か", answers: ["安全保障理事会"] }, { id: 22505, question: "常任理事国はアメリカ、中国、イギリス、フランスとどこか", answers: ["ロシア"] }, { id: 22506, question: "国連総会が軍事措置の勧告を行う決議を何というか", answers: ["平和のための結集"] }, { id: 22507, question: "1965 年に日本と韓国で締結された条約は何か", answers: ["日韓基本条約"] }, { id: 22508, question: "中国との国交正常化後、1978 年に日中で締結した条約は何か", answers: ["日中平和友好条約"] }, { id: 22509, question: "1992 年、日本が初の PKO として自衛隊を派遣した国はどこか", answers: ["カンボジア"] }, { id: 22510, question: "日本が 1993 年から国連と共同開催している国際会議は何か", answers: ["アフリカ開発会議", "TICAD"] }, { id: 22511, question: "先進国が発展途上国に対して開発資金や技術を援助することを何というか", answers: ["政府開発援助", "ODA"] }, { id: 22512, question: "募金や寄付などを資金に環境保護や人道支援に取り組む民間組織を何というか", answers: ["NGO", "非政府組織"] }, { id: 22513, question: "民間よる非政府組織で比較的規模の小さなものを何というか", answers: ["NPO"] }, { id: 22514, question: "アフガニスタンの医療活動や水資源の開発に奉仕した日本人医師は誰か", answers: ["中村哲"] }, { id: 22515, question: "暴力や貧困などさまざまな脅威から人間一人ひとりを守る考え方を何というか", answers: ["人間の安全保障"] }, { id: 22516, question: "人間の潜在能力の向上を主張し国連の活動に影響を与えた経済学者は誰か", answers: ["セン"] }, { id: 22517, question: "SDGs は日本語で何と訳されているか", answers: ["持続可能な開発目標"] }, { id: 22518, question: "貿易についての交渉や取り決めを行う国連の機関は何か", answers: ["WTO", "世界貿易機関"] }
+                { id: 21301, question: "裁判所は国会や内閣の干渉を受けないという原則を何というか", answers: ["司法権の独立"] },
+                { id: 21302, question: "法律が憲法に違反していることを何というか", answers: ["違憲"] },
+                { id: 21303, question: "国会に設置され裁判官を罷免することができる裁判所は何か", answers: ["弾劾裁判所"] },
+                { id: 21304, question: "私人間の争いを解決する裁判を何というか", answers: ["民事裁判"] },
+                { id: 21305, question: "検察官と被告人が対峙し刑罰を争う裁判を何というか", answers: ["刑事裁判"] },
+                { id: 21306, question: "日本では3回まで裁判を受けられる。この制度を何というか", answers: ["三審制"] },
+                { id: 21307, question: "一審判決に不服を申し立て、二審に再審理を求めることを何というか", answers: ["控訴"] },
+                { id: 21308, question: "最高裁判所に再審理を求めることを何というか", answers: ["上告"] },
+                { id: 21309, question: "判決確定後でも裁判のやり直しを行うことができる制度は何か", answers: ["再審制度"] },
+                { id: 21310, question: "他人の犯罪を告発すると告発者の処分が軽減される制度を何というか", answers: ["司法取引"] },
+                { id: 21311, question: "法律が違憲と判断された場合、何が行われるか", answers: ["法改正"] },
+                { id: 21312, question: "最高裁判所長官の指名を行う機関はどこか", answers: ["内閣"] },
+                { id: 21313, question: "自費で弁護士を雇えない場合、国費で弁護人を付することができる制度を何というか", answers: ["国選弁護制度"] },
+                { id: 21314, question: "最高裁判所の裁判官が適任かどうか判断するための国民の投票を何というか", answers: ["国民審査"] },
+                { id: 21315, question: "裁判員の対象年齢は何歳以上か", answers: ["18歳"] },
+                { id: 21316, question: "裁判員制度の対象となるのは何審か", answers: ["一審"] },
+                { id: 21317, question: "裁判員制度では有罪・無罪のほかに何を決めるか", answers: ["量刑"] },
+                { id: 21318, question: "刑罰は犯罪に対する報いであるという考え方を何というか", answers: ["応報刑論"] },
+                { id: 21319, question: "刑罰は犯罪の予防のためにあるという考え方を何というか", answers: ["目的刑論"] },
+                { id: 21320, question: "犯罪被害者や遺族が裁判で被告人尋問や証人尋問ができる制度は何か", answers: ["被害者参加制度"] },
+                { id: 21321, question: "不起訴となった事件について、判断が妥当か否かを審査する制度は何か", answers: ["検察審査会制度"] },
+                { id: 21322, question: "14歳以上、20歳未満の者が犯した犯罪を裁く法律を何というか", answers: ["少年法"] },
+                { id: 21323, question: "事後に制定された法律によって罰せられないことを何というか", answers: ["遡及処罰の禁止"] },
+                { id: 21324, question: "被告人は判決が確定しない限り無罪として扱うという原則を何というか", answers: ["無罪推定の法則"] },
+                { id: 21325, question: "無罪の者が刑罰を科されることを何というか", answers: ["冤罪"] },
+                { id: 21326, question: "逮捕には裁判官が発する逮捕状を必要とする刑事手続きの仕組みを何というか", answers: ["令状主義"] },
+                { id: 21327, question: "取り調べなどで言いたくないことを言わない権利を何というか", answers: ["黙秘権"] },
+                { id: 22101, question: "民主主義の起源とされる国はどこか", answers: ["ギリシャ"] },
+                { id: 22102, question: "市民が直接政治に参加し合意を形成していく政治システムを何というか", answers: ["直接民主主義"] },
+                { id: 22103, question: "市民が代表者を選び、代表者に政治を委ねるシステムを何というか", answers: ["間接民主主義", "議会制民主主義"] },
+                { id: 22104, question: "国民が直接投票により罷免できる裁判官は誰か", answers: ["最高裁判所裁判官"] },
+                { id: 22105, question: "選挙権が得られる年齢はいくつか", answers: ["18歳"] },
+                { id: 22106, question: "誰に投票したか明かされない選挙の仕組みを何というか", answers: ["秘密投票"] },
+                { id: 22107, question: "国籍をもつすべての成人が投票できる選挙を何というか", answers: ["普通選挙"] },
+                { id: 22108, question: "1つの選挙区から1人の当選者を選出する選挙制度を何というか", answers: ["小選挙区制"] },
+                { id: 22109, question: "政党を選んで投票する選挙制度を何というか", answers: ["比例代表制"] },
+                { id: 22110, question: "選挙区の人口の偏りで議員数と有権者数の比率に差が出ることを何というか", answers: ["一票の格差"] },
+                { id: 22111, question: "落選した候補者に投じられた票を何というか", answers: ["死票"] },
+                { id: 22112, question: "選挙区で落選した候補者が比例区で復活当選の機会を与える制度を何というか", answers: ["重複立候補制"] },
+                { id: 22113, question: "比例代表選挙であらかじめ当選順位を発表しておく仕組みを何というか", answers: ["拘束名簿式"] },
+                { id: 22114, question: "公正な選挙のため、選挙運動の禁止事項などをまとめた法律は何か", answers: ["公職選挙法"] },
+                { id: 22115, question: "選挙活動違反で候補者本人の行為でなくても当選無効になること何というか", answers: ["連座制"] },
+                { id: 22116, question: "名簿の登録地以外でも投票できる制度を何というか", answers: ["不在者投票"] },
+                { id: 22117, question: "投票日の前に投票できる制度を何というか", answers: ["期日前投票"] },
+                { id: 22118, question: "衆議院議員、参議院議員の任期はそれぞれ何年か", answers: ["衆議院4年、参議院6年"] },
+                { id: 22119, question: "衆議院議員、参議院議員の被選挙権はそれぞれ何歳か", answers: ["衆議院議員25歳、参議院議員30歳"] },
+                { id: 22120, question: "条例や政策について国民に広く意見を求める制度を何というか", answers: ["パブリックコメント", "意見公募"] },
+                { id: 22121, question: "政治を健全に機能させるための情報公開の制度は、国民の何の権利に基づくか", answers: ["知る権利"] },
+                { id: 22122, question: "2022年1月現在、自由民主党と連立政権を組んでいる政党はどこか", answers: ["公明党"] },
+                { id: 22123, question: "自由民主党政権が続いてきた戦後の政治状況を何というか", answers: ["55年体制"] },
+                { id: 22124, question: "有力な政党2つが政権獲得を目指すこと何というか", answers: ["二大政党制"] },
+                { id: 22125, question: "複数の政党で政権を担当することを何というか", answers: ["連立政権"] },
+                { id: 22126, question: "プライバシーにかかわる情報の利用制限を義務付ける法律は何か", answers: ["個人情報保護法"] },
+                { id: 22127, question: "政府が特定した機密情報を漏洩した公務員を処罰する法律は何か", answers: ["特定秘密保護法"] },
+                { id: 22128, question: "新聞社やテレビ局が行う統計的社会調査を何というか", answers: ["世論調査"] },
+                { id: 22129, question: "マスコミは世論への影響力が大きいことから何といわれているか", answers: ["第四の権力"] },
+                { id: 22130, question: "特定の政党を支持しない人々の集団を何というか", answers: ["無党派層"] },
+                { id: 22131, question: "大衆の意見に過度に迎合した政治を何というか", answers: ["ポピュリズム"] },
+                { id: 22132, question: "メディアの情報を適切に判断し読み解く能力を何というか", answers: ["メディアリテラシー", "情報リテラシー"] },
+                { id: 22133, question: "若年層の政治的無関心などの結果、起こっている問題は何か", answers: ["投票率の低下"] },
+                { id: 22201, question: "国会は衆議院と参議院の2つから構成される。これを何というか", answers: ["二院制"] },
+                { id: 22202, question: "両院の議決が一致しない場合、最終的にどちらの議決が優先されるか", answers: ["衆議院"] },
+                { id: 22203, question: "予算、条約などで両院の議決が一致しないときに開かれる会議は何か", answers: ["両院協議会"] },
+                { id: 22204, question: "法案について、識者の意見を聞くために国会で開かれるものは何か", answers: ["公聴会"] },
+                { id: 22205, question: "国会議員が政府や官庁の行政に対して調査を行う権利を何というか", answers: ["国政調査権"] },
+                { id: 22206, question: "国会議員が国会会期中に逮捕されない特権を何というか", answers: ["不逮捕特権"] },
+                { id: 22207, question: "議員の言論活動を保障するため、院内での発言に責任を問われない特権を何というか", answers: ["免責特権"] },
+                { id: 22208, question: "議員により発議された法案を何というか", answers: ["議員立法"] },
+                { id: 22209, question: "毎年1月に召集され、予算案と法律案を審議する国会を何というか", answers: ["通常国会"] },
+                { id: 22210, question: "補正予算案やもち越された議題を審議する国会を何というか", answers: ["臨時国会"] },
+                { id: 22211, question: "国会が指名を行う大臣は誰か", answers: ["内閣総理大臣"] },
+                { id: 22212, question: "衆議院が内閣に不信任決議した時、内閣が選択できることは総辞職と何か", answers: ["衆議院の解散"] },
+                { id: 22213, question: "国会と内閣が密接に関係して政治を動かしていく仕組みを何というか", answers: ["議院内閣制"] },
+                { id: 22214, question: "東日本大震災からの復興のため期限付きで設置された省庁は何か", answers: ["復興庁"] },
+                { id: 22215, question: "2023年4月に設置された新しい庁は何か", answers: ["こども家庭庁"] },
+                { id: 22216, question: "各省の幹部人事を内閣主導で決定するために置かれた局は何か", answers: ["内閣人事局"] },
+                { id: 22217, question: "内閣総理大臣が主宰する、内閣の意思決定を行う会議は何か", answers: ["閣議"] },
+                { id: 22218, question: "中央官庁の公務員が政治の中心的役割を果たしている状況を何というか", answers: ["官僚政治"] },
+                { id: 22219, question: "政治を政治家が主導して行うために設置された役職は大臣政務官と何か", answers: ["副大臣"] },
+                { id: 22220, question: "法律の細部の取り決めなどや命令を行政機関に委ねることを何というか", answers: ["委任立法"] },
+                { id: 22221, question: "経済活動活性化のため、さまざまな規則や認可制度を緩めることを何というか", answers: ["規制緩和"] },
+                { id: 22222, question: "官僚が民間企業や団体に幹部として再就職することを何というか", answers: ["天下り"] },
+                { id: 22223, question: "2007年に民営化された公営事業は何か", answers: ["郵政事業"] },
+                { id: 22224, question: "住民にとって必要な最低限度の生活環境を何というか", answers: ["シビルミニマム"] },
+                { id: 22225, question: "地方自治体の財源を補うため国から支出されるお金は、地方交付税と何か", answers: ["国庫支出金"] },
+                { id: 22226, question: "地方自治体の自主財源の割合が低い状況を何と表すか", answers: ["三割自治"] },
+                { id: 22227, question: "自治体に寄付をする代わりに所得税などの控除を受けられる仕組みを何というか", answers: ["ふるさと納税"] },
+                { id: 22228, question: "2000年に廃止されるまで地方自治体が国の代理で行っていた事務を何というか", answers: ["機関委任事務"] },
+                { id: 22229, question: "地方の自立を目指し、2000年に施行された法律は何か", answers: ["地方分権一括法"] },
+                { id: 22230, question: "地方への税源移譲、地方交付税の見直しなどを一本化して進めた改革を何というか", answers: ["三位一体の改革"] },
+                { id: 22231, question: "税の優遇や金融支援などを特別に受けられる自治体を何というか", answers: ["特区"] },
+                { id: 22232, question: "住民の政治参加によって地方自治が行われることを何というか", answers: ["住民自治"] },
+                { id: 22233, question: "国政と比べ直接民主主義を実現しやすいことから、地方自治は何といわれているか", answers: ["民主主義の学校"] },
+                { id: 22234, question: "首長と議員の両方を住民が直接選挙で選ぶ制度を何というか", answers: ["二元代表制"] },
+                { id: 22235, question: "地方自治体が制定、改廃し、その自治体内で適用される法規を何というか", answers: ["条例"] },
+                { id: 22236, question: "地方自治体の政策などについて、住民の意思を問うための投票を何というか", answers: ["住民投票", "レフェンダム"] },
+                { id: 22237, question: "代理人が住民からの苦情を受け付け、調査分析して行政機関へ勧告する制度は何か", answers: ["オンブズマン制度"] }
+            ],
+            english: [
+                { question: "音色、音調", answer: "tone" },
+                { question: "(うっとりと)聞き入る", answer: "take in" },
+                { question: "よく考える、注意深く見る", answer: "consider" },
+                { question: "(楽譜の)初見歌唱", answer: "sight-read" },
+                { question: "クラシックの作品", answer: "classical piece" },
+                { question: "合唱団", answer: "choir" },
+                { question: "(あきれて)目をぐるっとする", answer: "roll her eyes" },
+                { question: "目が見えない", answer: "blind" },
+                { question: "言い訳", answer: "excuse" },
+                { question: "最悪、マジでひどい", answer: "it sucks" },
+                { question: "(ムチのように)パッと振り向く", answer: "whip around" },
+                { question: "吐き気がする、最悪", answer: "disgusting" },
+                { question: "それは私に期待されていることだ", answer: "it's expected of me" },
+                { question: "Vすることがどんなことか", answer: "what it's like to" },
+                { question: "(人に対して)埋め合わせする", answer: "make it up" },
+                { question: "しつけ、規律、自制心", answer: "discipline" },
+                { question: "準備不足だ", answer: "You're unprepared" },
+                { question: "2日と続かないだろう", answer: "You wouldn't last two days" },
+                { question: "お前は何もわかっていない", answer: "You don't know shit" },
+                { question: "間違いなく、確実に", answer: "certainly" },
+                { question: "失敗についてのレッスン", answer: "A lesson in failure" },
+                { question: "心からの、嘘偽りのない", answer: "genuine" },
+                { question: "嫌な；最低なやつだらけ", answer: "full of assholes" },
+                { question: "とても疲れる", answer: "exhausting" },
+                { question: "イライラさせられた状態", answer: "frustrated" },
+                { question: "嵐、猛スピードで移動する", answer: "storm" },
+                { question: "免許", answer: "licence" },
+                { question: "停止する、中断する", answer: "suspend" },
+                { question: "もう釣りは終わった", answer: "We're done fishing" },
+                { question: "沿岸警備隊", answer: "coasties" },
+                { question: "こっそり教える、密告する", answer: "tip off" },
+                { question: "船の甲板で働く人", answer: "deckhand" },
+                { question: "解決する、なんとかする", answer: "figure out" },
+                { question: "～を責める", answer: "blame" },
+                { question: "～を数に入れる、頼る", answer: "count on" },
+                { question: "端、角", answer: "edge" },
+                { question: "電極", answer: "electrode" },
+                { question: "流し", answer: "sink" },
+                { question: "洗面台", answer: "sank" },
+                { question: "沈む", answer: "sunk" },
+                { question: "～を頼る、期待する", answer: "look to" },
+                { question: "～することになっている", answer: "be supposed to" },
+                { question: "爆発する(ex-)", answer: "explode" },
+                { question: "爆発する(er-)", answer: "erupt" },
+                { question: "扱われる", answer: "get treated" },
+                { question: "無力な、どうすることもできない", answer: "helpless" },
+                { question: "会社＜企業＞の", answer: "corporate" },
+                { question: "重役", answer: "executive" },
+                { question: "riseの過去形", answer: "rose" },
+                { question: "階級；等級", answer: "rank" },
+                { question: "上位の；上級の", answer: "senior" },
+                { question: "慣れている", answer: "used" },
+                { question: "～に慣れる", answer: "get used to" },
+                { question: "～を知る", answer: "learn" },
+                { question: "昇進", answer: "promotion" },
+                { question: "取締役の；重役の", answer: "executive" },
+                { question: "たとえそうでも；とはいうものの", answer: "that said" },
+                { question: "～を印刷する", answer: "print" },
+                { question: "～を浸す；～をつける", answer: "steep" },
+                { question: "～に浸っている；深い影響を受けている", answer: "be steeped in" },
+                { question: "職；仕事", answer: "position" },
+                { question: "責任", answer: "responsibility" },
+                { question: "肩書；称号；敬称", answer: "title" },
+                { question: "何度も；繰り返し", answer: "time and again" },
+                { question: "権威；権力；権限", answer: "authority" },
+                { question: "野心的な；大規模な", answer: "ambitious" },
+                { question: "題材；資料；資材", answer: "material" },
+                { question: "その過程で；その間に", answer: "along the way" },
+                { question: "詳細な；細かい", answer: "detailed" },
+                { question: "見本", answer: "sample" },
+                { question: "章", answer: "chapter" },
+                { question: "～を売り込む", answer: "shop around" },
+                { question: "出版社", answer: "publisher" },
+                { question: "《マスコミなどに》取り上げられること", answer: "exposure" },
+                { question: "読者", answer: "reader" },
+                { question: "無理な要求；骨の折れる課題", answer: "stretch" },
+                { question: "～を解決する", answer: "figure out" },
+                { question: "ソフトウェア", answer: "software" },
+                { question: "～をたどる；～を追跡する", answer: "follow" },
+                { question: "特定の", answer: "particular" },
+                { question: "題名", answer: "title" },
+                { question: "～と(約束して)会う；～と会合を持つ", answer: "meet with" },
+                { question: "ダース", answer: "dozen" },
+                { question: "(非常に)多くの～", answer: "dozens of" },
+                { question: "熱心な", answer: "enthusiastic" },
+                { question: "しっかりした；確かな", answer: "sound" },
+                { question: "だんだん", answer: "increasingly" },
+                { question: "許可", answer: "permission" },
+                { question: "～に許可を与える；～を認める", answer: "grant" },
+                { question: "動機付け；動機；やる気", answer: "motivation" },
+                { question: "力；勢い；強さ；影響力のある人", answer: "force" },
+                { question: "空間；場所", answer: "space" },
+                { question: "～を拾い集める", answer: "gather up" },
+                { question: "～の間に", answer: "over the course of" },
+                { question: "《結論・政策など》を徹底的に検討して出す", answer: "hammer out" },
+                { question: "《職業上の》同僚", answer: "colleague" },
+                { question: "異なって；それぞれに", answer: "differently" },
+                { question: "語彙", answer: "vocabulary" },
+                { question: "工業技術の；科学技術の", answer: "technical" },
+                { question: "学科；学問", answer: "discipline" },
+                { question: "生産的な", answer: "productive" },
+                { question: "～を例証する", answer: "illustrate" },
+                { question: "必要性", answer: "need" },
+                { question: "リンク", answer: "link" },
+                { question: "移民、移住者", answer: "immigrant" },
+                { question: "すべてを考慮に入れると", answer: "all things considered" },
+                { question: "当時は", answer: "back then" },
+                { question: "政治の", answer: "political" },
+                { question: "厳重に、注意深く", answer: "closely" },
+                { question: "～だと断言する", answer: "swear" },
+                { question: "～にもかかわらず", answer: "despite" },
+                { question: "災難、苦しい状況", answer: "trouble" },
+                { question: "《人に》起こる", answer: "come one's way" },
+                { question: "働いている、仕事中で", answer: "at work" },
+                { question: "～を確認する、同定する", answer: "identify" },
+                { question: "どうやら～らしい", answer: "apparently" },
+                { question: "変わった、奇妙な", answer: "defense" },
+                { question: "句、表現、言い回し", answer: "phrase" },
+                { question: "きちんと、適切に", answer: "properly" },
+                { question: "外国人", answer: "foreigner" },
+                { question: "どちらかというと", answer: "kind of" },
+                { question: "銃弾", answer: "bullet" },
+                { question: "《事故・犯罪などが起きた》現場", answer: "scene" },
+                { question: "審議する", answer: "deliberate" },
+                { question: "(裁判所の)判決、評決", answer: "decision" },
+                { question: "国籍", answer: "nationality" },
+                { question: "信条、信念、意見", answer: "belief" },
+                { question: "デモをする、示威活動をする", answer: "demonstrate" },
+                { question: "調査、取り調べ", answer: "investigation" },
+                { question: "電気の", answer: "electronic" },
+                { question: "議論", answer: "argument" },
+                { question: "～を提案する", answer: "propose" },
+                { question: "～するように要求する、命令する", answer: "require" },
+                { question: "～を再調査する、見直す", answer: "review" },
+                { question: "～を認める", answer: "admit" },
+                { question: "記念日", answer: "anniversary" },
+                { question: "～から判断すると", answer: "judging from" }
             ],
             kobun: [
-                { question: "たいへん。とても。", answer: "いと", kanji: "" }, { question: "いっそう。ますます。さらに。", answer: "いとど", kanji: "" }, { question: "《疑問》どうして～か", answer: "など", kanji: "" }, { question: "《反語》どうして～か、いや～でない", answer: "など", kanji: "" }, { question: "いつの間にか。早く。", answer: "いつしか", kanji: "何時しか" }, { question: "互いに", answer: "かたみに", kanji: "互に" }, { question: "なるほど。本当に", answer: "げに", kanji: "実に" }, { question: "なるほど。", answer: "むべ", kanji: "" }, { question: "一日中。日中ずっと。", answer: "ひねもす", kanji: "終日" }, { question: "一晩中。夜通し。", answer: "よもすがら", kanji: "夜もすがら" }, { question: "早く。すぐに。急いで。", answer: "とく", kanji: "疾く" }, { question: "すでに。とっくに。早くも。", answer: "とく", kanji: "疾く" }, { question: "～ないでください。", answer: "な～そ", kanji: "" }, { question: "さっきの。先述の。例の。", answer: "ありつる", kanji: "" }, { question: "以前の。昔の。生前の。", answer: "ありし", kanji: "" }, { question: "別の。違った。意外な。望ましくない。", answer: "あらぬ", kanji: "" }, { question: "どうにでもなれ。ええ、ままよ。", answer: "さはれ", kanji: "" }, { question: "しっ、静かに。ああ、やかましい。", answer: "あなかま", kanji: "" }, { question: "～しきれない。～するとすぐに。", answer: "あへず", kanji: "" }, { question: "そうなるはずの。ふさわしい。立派な。", answer: "さるべき", kanji: "" }, { question: "さあ、いらっしゃい。", answer: "いざたまへ", kanji: "いざ給へ" }, { question: "思った通りだ。案の定。", answer: "さればこそ", kanji: "" }, { question: "名前として持っている。有名だ。", answer: "なにしおふ", kanji: "名にし負ふ" }, { question: "いつものように。", answer: "れいの", kanji: "例の" }, { question: "並々ではない。", answer: "おろかならず", kanji: "疎かならず" }, { question: "言うまでもない。", answer: "いふもおろかなり", kanji: "言ふも疎かなり" }, { question: "物足りない。いつまでも飽きることがない。", answer: "あかず", kanji: "飽かず" }, { question: "結婚する。皆で～する", answer: "あふ", kanji: "合う・会う・逢う" }, { question: "(男が女を)妻とする。", answer: "みる", kanji: "見る" }, { question: "男女が関係を持つ。親しくする。説得して味方につける。", answer: "かたらふ", kanji: "語らふ" }, { question: "(付き合っている／結婚している相手に対して)あなた", answer: "ひと", kanji: "人" }, { question: "世間の人。立派な人。", answer: "ひと", kanji: "人" }, { question: "目立たない格好にする。出家姿にする。", answer: "やつす", kanji: "窶す" }, { question: "通う。似通う。", answer: "かよふ", kanji: "通ふ" }, { question: "愛する。思い悩む。", answer: "おもふ", kanji: "思ふ" }, { question: "途絶えがちだ。", answer: "かれがれなり", kanji: "離れ離れなり" }, { question: "移動する。色あせる。心変わりする。", answer: "うつろふ", kanji: "移ろふ" }, { question: "夫婦の仲。男女の間柄。", answer: "よ", kanji: "世" }, { question: "夫婦の仲。男女の間柄。", answer: "よのなか", kanji: "世の中" }
-            ],
-            worldHistory1: [
-                 { "id": 1, "question": "1501年にイスマーイール1世が建国し、シーア派を国教としたイランの王朝は何？", "answers": ["サファヴィー朝"] },
-                 { "id": 2, "question": "首都をイスファハーンに移し、サファヴィー朝の最盛期を築いた王は誰？", "answers": ["アッバース1世"] },
-                 { "id": 3, "question": "サファヴィー朝の首都イスファハーンの繁栄ぶりをたたえた言葉は何？", "answers": ["イスファハーンは世界の半分"] },
-                 { "id": 4, "question": "1736年、サファヴィー朝を滅ぼした人々は誰？", "answers": ["アフガン人"] },
-                 { "id": 5, "question": "ティムール朝を滅ぼしたウズベク人が中央アジアに建てた3つの国の総称は？", "answers": ["ウズベク3ハン国"] },
-                 { "id": 6, "question": "ウズベク3ハン国のうち、1505年に成立した国は？", "answers": ["ブハラ＝ハン国"] },
-                 { "id": 7, "question": "ウズベク3ハン国のうち、1512年に成立した国は？", "answers": ["ヒヴァ＝ハン国"] },
-                 { "id": 8, "question": "ウズベク3ハン国のうち、1710年に成立した国は？", "answers": ["コーカンド＝ハン国"] },
-                 { "id": 9, "question": "19世紀から20世紀にかけて、ウズベク3ハン国を支配下に置いた国はどこ？", "answers": ["ロシア"] },
-                 { "id": 10, "question": "唐の滅亡後、華北で5つの王朝が次々と興亡した約50年間の分裂時代を何と呼ぶ？", "answers": ["五代十国"] },
-                 { "id": 11, "question": "960年に趙匡胤が建国し、五代十国の分裂を統一した王朝は何？", "answers": ["宋"] },
-                 { "id": 12, "question": "宋が科挙で選抜した文人官僚を重視した政治方針を何と呼ぶ？", "answers": ["文治主義"] },
-                 { "id": 13, "question": "神宗の時代に、富国強兵を目指して青苗法や市易法などの新法を実施した政治家は誰？", "answers": ["王安石"] },
-                 { "id": 14, "question": "11世紀に中国西北部を支配したチベット系の国で、宋としばしば対立した国は？", "answers": ["西夏"] },
-                 { "id": 15, "question": "10世紀初めに耶律阿保機が建国した、契丹人の王朝は何？", "answers": ["遼"] },
-                 { "id": 16, "question": "936年に遼が獲得した、万里の長城南側の地域を何と呼ぶ？", "answers": ["燕雲十六州"] },
-                 { "id": 17, "question": "1004年に宋が遼に多額の銀や絹を贈ることを約束した和議を何と呼ぶ？", "answers": ["澶淵の盟", "せんえんのめい"] },
-                 { "id": 18, "question": "1115年に完顔阿骨打が建国した女真人の王朝は何？", "answers": ["金"] },
-                 { "id": 19, "question": "1126〜27年に金が宋の都開封を攻略し、皇帝らを連れ去った事件を何と呼ぶ？", "answers": ["靖康の変"] },
-                 { "id": 20, "question": "靖康の変の後、高宗が江南で再建した王朝を何と呼ぶ？", "answers": ["南宋"] },
-                 { "id": 21, "question": "1142年に南宋が金に臣下の礼をとることなどを条件に結んだ和議を何と呼ぶ？", "answers": ["紹興の和議"] },
-                 { "id": 22, "question": "江南や華南で発展した、宋代の主要な輸出品であった焼き物や織物、また主要な農作物は？", "answers": ["陶磁器・絹織物・稲作"] },
-                 { "id": 23, "question": "宋代に広州などに置かれ、海上貿易の管理や関税の徴収を行った役所を何と呼ぶ？", "answers": ["市舶司"] },
-                 { "id": 24, "question": "1206年にモンゴル高原の遊牧民を統一し、モンゴル帝国の初代皇帝となった人物は誰？", "answers": ["チンギス＝ハン"] },
-                 { "id": 25, "question": "チンギス＝ハンの次男チャガタイが中央アジアに建国した国を何と呼ぶ？", "answers": ["チャガタイ＝ハン国"] },
-                 { "id": 26, "question": "モンゴル帝国の第2代皇帝で、都をカラコルムに定めたのは誰？", "answers": ["オゴタイ＝ハン"] },
-                 { "id": 27, "question": "1234年にオゴタイ＝ハンの遠征軍によって滅ぼされた、中国の王朝は？", "answers": ["金"] },
-                 { "id": 28, "question": "チンギス＝ハンの孫バトゥが南ロシアに建国した国を何と呼ぶ？", "answers": ["キプチャク＝ハン国"] },
-                 { "id": 29, "question": "チンギス＝ハンの孫フラグがイラン・イラク方面に建国した国を何と呼ぶ？", "answers": ["イル＝ハン国"] },
-                 { "id": 30, "question": "モンゴル帝国の第5代皇帝で、国号を「元」と定めたのは誰？", "answers": ["フビライ＝ハン"] },
-                 { "id": 31, "question": "フビライ＝ハンが中国に建てた王朝の名前は？", "answers": ["元"] },
-                 { "id": 32, "question": "モンゴル帝国で財務官僚として重用された、イスラーム教徒の商人などを何と呼ぶ？", "answers": ["ムスリム"] },
-                 { "id": 33, "question": "モンゴル帝国が整備した、宿駅（駅伝）制度を何と呼ぶ？", "answers": ["ジャムチ"] },
-                 { "id": 34, "question": "モンゴル帝国が広大な領域を支配するため、官僚登用制度として実施した試験制度は？", "answers": ["科挙"] },
-                 { "id": 35, "question": "1370年にティムールが中央アジアに建国したイスラーム王朝は何？", "answers": ["ティムール朝"] },
-                 { "id": 36, "question": "西チャガタイ＝ハン国から台頭し、ティムール朝を建国した人物は誰？", "answers": ["ティムール"] },
-                 { "id": 37, "question": "ティムールがアンカラの戦いでオスマン帝国を破った後、遠征途上で病死したのはどの国への遠征中？", "answers": ["明"] },
-                 { "id": 38, "question": "1507年にティムール朝を滅ぼしたトルコ系遊牧民は何？", "answers": ["ウズベク"] },
-                 { "id": 39, "question": "大航海時代のヨーロッパで、肉の保存や風味付けのために非常に需要が高かったアジアの特産品は？", "answers": ["香辛料"] },
-                 { "id": 40, "question": "15世紀に地中海東部の交易路を支配し、ヨーロッパ諸国に新航路開拓の動機を与えた帝国は？", "answers": ["オスマン帝国"] },
-                 { "id": 41, "question": "1498年にアフリカ南端の喜望峰を回ってインド航路を開拓したポルトガルの航海者は誰？", "answers": ["ヴァスコ＝ダ＝ガマ"] },
-                 { "id": 42, "question": "ポルトガルがアジアにおける香辛料貿易の拠点として占領した、マレー半島の港市はどこ？", "answers": ["マラッカ"] },
-                 { "id": 43, "question": "「香料諸島」とも呼ばれた、香辛料の主要産地であるインドネシア東部の島々を何と呼ぶ？", "answers": ["モルッカ諸島"] },
-                 { "id": 44, "question": "17世紀にポルトガルに代わってアジア貿易の主導権を握り、バタヴィアを拠点とした国はどこ？", "answers": ["オランダ"] },
-                 { "id": 45, "question": "14世紀半ばに南インドで建国され、香辛料などの交易で栄えたヒンドゥー教の王国は？", "answers": ["ヴィジャヤナガル王国"] },
-                 { "id": 46, "question": "1526年にバーブルが北インドに建国したイスラーム王朝を何と呼ぶ？", "answers": ["ムガル帝国"] },
-                 { "id": 47, "question": "ティムールの子孫で、パーニーパットの戦いに勝利してムガル帝国を建国したのは誰？", "answers": ["バーブル"] },
-                 { "id": 48, "question": "パーニーパットの戦いでバーブルに敗れた、北インドのイスラーム王朝は？", "answers": ["デリー＝スルタン朝"] },
-                 { "id": 49, "question": "ムガル帝国の第3代皇帝で、ジズヤを廃止するなどヒンドゥー教徒との融和政策を進めたのは誰？", "answers": ["アクバル"] },
-                 { "id": 50, "question": "ムガル帝国のアクバル帝が融和を図った、インドの多数派が信仰する宗教は何？", "answers": ["ヒンドゥー教"] },
-                 { "id": 51, "question": "ムガル帝国の第6代皇帝で、ジズヤを復活させるなど厳格なイスラーム政策をとったのは誰？", "answers": ["アウラングゼーブ"] },
-                 { "id": 52, "question": "アウラングゼーブ帝が行った、ヒンドゥー教寺院の破壊などの非寛容な政策を何と表現する？", "answers": ["弾圧"] },
-                 { "id": 53, "question": "アウラングゼーブ帝の時代に、パンジャーブ地方で抵抗運動を行った宗教集団は？", "answers": ["シク教徒"] },
-                 { "id": 54, "question": "アウラングゼーブ帝の時代に、デカン高原で台頭し、のちに王国を建国したヒンドゥー教徒の集団は？", "answers": ["マラーター王国"] },
-                 { "id": 55, "question": "イスラーム文化とヒンドゥー文化が融合して生まれた、ムガル帝国時代の文化を何と呼ぶ？", "answers": ["インド＝イスラーム文化"] },
-                 { "id": 56, "question": "ドームとミナレットを特徴とする、インド＝イスラーム建築の代表作は？", "answers": ["タージ＝マハル"] },
-                 { "id": 57, "question": "オスマン帝国で、世俗の君主であるスルタンが宗教上の最高指導者であるカリフを兼ねる制度を何と呼ぶ？", "answers": ["スルタン＝カリフ制"] },
-                 { "id": 58, "question": "オスマン帝国で統治の基本となったイスラーム法を何と呼ぶ？", "answers": ["シャリーア"] },
-                 { "id": 59, "question": "バルカン半島のキリスト教徒の子弟をイスラーム教に改宗させて編成した、スルタン直属の常備歩兵軍団は何？", "answers": ["イェニチェリ"] },
-                 { "id": 60, "question": "オスマン帝国内で、キリスト教徒やユダヤ教徒などが信仰ごとに形成することを認められた宗教共同体を何と呼ぶ？", "answers": ["ミッレト"] },
-                 { "id": 61, "question": "オスマン帝国がフランスなどヨーロッパ諸国の商人に与えた、領内での通商・居住の自由などを認める特権を何と呼ぶ？", "answers": ["カピチュレーション"] },
-                 { "id": 62, "question": "コロンブスが到達したアメリカ大陸を、当時のヨーロッパ人は何と呼んだ？", "answers": ["新大陸"] },
-                 { "id": 63, "question": "1492年にコロンブスが最初に上陸した、西インド諸島の島はどこ？", "answers": ["サンサルバドル島"] },
-                 { "id": 64, "question": "スペイン王の支援を受け、1522年に世界周航を達成した艦隊を率いた探検家は誰？", "answers": ["マゼラン"] },
-                 { "id": 65, "question": "16世紀にアメリカ大陸を武力で征服した、スペインの「征服者」たちを何と呼ぶ？", "answers": ["コンキスタドール"] },
-                 { "id": 66, "question": "1521年にスペインのコルテスによって滅ぼされた、現在のメキシコにあった文明・帝国は？", "answers": ["アステカ帝国"] },
-                 { "id": 67, "question": "1533年にスペインのピサロによって滅ぼされた、現在のペルーにあった文明・帝国は？", "answers": ["インカ帝国"] },
-                 { "id": 68, "question": "スペイン国王が征服者に、先住民のキリスト教化を条件に土地と住民の支配を委託した制度を何と呼ぶ？", "answers": ["エンコミエンダ制"] },
-                 { "id": 69, "question": "エンコミエンダ制のもとで、鉱山などで過酷な労働を強いられた人々は？", "answers": ["先住民"] },
-                 { "id": 70, "question": "先住民の人口が激減したため、代わりの労働力としてアフリカから強制的に連れてこられた人々を何と呼ぶ？", "answers": ["黒人奴隷"] },
-                 { "id": 71, "question": "13世紀末にアナトリア北西部に建国されたトルコ系のイスラーム国家は？", "answers": ["オスマン帝国"] },
-                 { "id": 72, "question": "オスマン帝国のムラト1世が勢力を拡大した、ヨーロッパ南東部の半島はどこ？", "answers": ["バルカン半島"] },
-                 { "id": 73, "question": "1402年、オスマン帝国のバヤジット1世がティムール軍に大敗した戦いを何と呼ぶ？", "answers": ["アンカラの戦い"] },
-                 { "id": 74, "question": "1453年にメフメト2世がコンスタンティノープルを攻略し、滅亡させた帝国は？", "answers": ["ビザンツ帝国"] },
-                 { "id": 75, "question": "セリム1世がマムルーク朝を滅ぼして保護権を得た、イスラームの2大聖地はどこ？", "answers": ["メッカ・メディナ"] },
-                 { "id": 76, "question": "1529年、スレイマン1世がオーストリアのハプスブルク家の本拠地を包囲した出来事を何と呼ぶ？", "answers": ["第1次ウィーン包囲"] },
-                 { "id": 77, "question": "1538年、オスマン帝国海軍がスペイン・ヴェネツィア連合艦隊を破り、地中海の制海権を確立した海戦は？", "answers": ["プレヴェザの海戦"] },
-                 { "id": 78, "question": "1571年、オスマン帝国海軍がスペイン・ヴェネツィアなどの連合艦隊に敗れた海戦は？", "answers": ["レパントの海戦"] },
-                 { "id": 79, "question": "1683年に行われたオスマン帝国による2度目のウィーン包囲で、失敗に終わったものを何と呼ぶ？", "answers": ["第2次ウィーン包囲"] },
-                 { "id": 80, "question": "1699年に結ばれ、オスマン帝国がオーストリアにハンガリーなどを割譲した条約は？", "answers": ["カルロヴィッツ条約"] },
-                 { "id": 81, "question": "10世紀末頃から南シナ海交易で活躍し、香辛料や絹織物などを扱った商人は？", "answers": ["中国商人"] },
-                 { "id": 82, "question": "唐代から始まり宋代に各地に設置された、海上貿易を管理する役所を何と呼ぶ？", "answers": ["市舶司"] },
-                 { "id": 83, "question": "アイユーブ朝からマムルーク朝時代にかけて、紅海やインド洋で活躍したムスリム商人の組合を何と呼ぶ？", "answers": ["カーリミー商人"] },
-                 { "id": 84, "question": "アッバース朝の衰退に伴い、バグダードに代わってイスラーム世界の商業の中心となったエジプトの都市は？", "answers": ["カイロ"] },
-                 { "id": 85, "question": "ヴェネツィアなどのイタリア商人が、地中海でムスリム商人を介して香辛料などを輸入した貿易を何と呼ぶ？", "answers": ["東方貿易", "レヴァント貿易"] }
-            ],
-            worldHistory2: [
-                { id: 1, question: "紀元前2600年頃からインダス川流域で栄えた古代都市文明を何と呼ぶ？", answers: ["インダス文明"] },
-                { id: 2, question: "インダス川中流域のパンジャーブ地方にある、インダス文明の代表的な遺跡は何？", answers: ["ハラッパー"] },
-                { id: 3, question: "インダス川下流域のシンド地方にある、「死の丘」を意味するインダス文明の代表的な遺跡は何？", answers: ["モエンジョ＝ダロ"] },
-                { id: 4, question: "碁盤の目状の道路や下水道施設が整っていた、インダス文明の都市の特徴を何と表現する？", answers: ["計画的に建設された都市文明"] },
-                { id: 5, question: "インダス文明で使われていた道具の主な材質から、この文明を何文明と呼ぶ？", answers: ["青銅器文明"] },
-                { id: 6, question: "インダス文明で使われていたが、現在も解読されていない文字を何と呼ぶ？", answers: ["インダス文字"] },
-                { id: 7, question: "アーリア人が先住民を支配するために作った、肌の色に基づく4つの基本的な身分階層を何と呼ぶ？", answers: ["ヴァルナ"] },
-                { id: 8, question: "ヴァルナの最上位に位置し、祭儀を司る神官階級を何と呼ぶ？", answers: ["バラモン"] },
-                { id: 9, question: "ヴァルナの中で、政治や軍事を担当した王侯・武士階級を何と呼ぶ？", answers: ["クシャトリヤ"] },
-                { id: 10, question: "ヴァルナの中で、農民や商人などの庶民階級を何と呼ぶ？", answers: ["ヴァイシャ"] },
-                { id: 11, question: "ヴァルナの最下層に位置し、隷属民として扱われた人々を何と呼ぶ？", answers: ["シュードラ"] },
-                { id: 12, question: "ヴァルナ制と、職業や出身地に基づく「ジャーティ」が結びついてできた、インド独自の社会制度を何と呼ぶ？", answers: ["カースト制度"] },
-                { id: 13, question: "地縁・血縁や世襲の職業などによって形成される社会集団を何と呼ぶ？", answers: ["ジャーティ"] },
-                { id: 14, question: "アーリア人が自然現象などを神格化し、神々への賛歌などをまとめた聖典の総称を何と呼ぶ？", answers: ["ヴェーダ"] },
-                { id: 15, question: "ヴェーダの中で最も古く、神々への賛歌を中心とする聖典を何と呼ぶ？", answers: ["『リグ＝ヴェーダ』", "リグ＝ヴェーダ"] },
-                { id: 16, question: "祭式中心のバラモン教を批判し、内面的な思索を重視した哲学を何と呼ぶ？", answers: ["ウパニシャッド哲学"] },
-                { id: 17, question: "人は死後、生前の行い（業）によって、何度も異なる生命に生まれ変わるという考え方を何と呼ぶ？", answers: ["輪廻転生"] },
-                { id: 18, question: "ウパニシャッド哲学において、宇宙の根源とされる普遍的な原理を何と呼ぶ？", answers: ["ブラフマン", "梵"] },
-                { id: 19, question: "ウパニシャッド哲学において、個人の中に存在する根源的な自己を何と呼ぶ？", answers: ["アートマン", "我"] },
-                { id: 20, question: "ウパニシャッド哲学において、ブラフマンとアートマンが一体であると悟ることで、輪廻の苦しみから解放されることを何と呼ぶ？", answers: ["解脱する", "解脱"] },
-                { id: 21, question: "バラモン教の権威を否定し、ガウタマ＝シッダールタが開いた宗教は何？", answers: ["仏教"] },
-                { id: 22, question: "バラモン教を批判し、徹底した不殺生と苦行を特徴とする、ヴァルダマーナが開いた宗教は何？", answers: ["ジャイナ教"] },
-                { id: 23, question: "紀元前6～5世紀頃に仏教を開いた人物で、「釈迦」とも呼ばれるのは誰？", answers: ["ガウタマ＝シッダールタ"] },
-                { id: 24, question: "紀元前6～5世紀頃にジャイナ教を大成した人物は誰？", answers: ["ヴァルダマーナ"] },
-                { id: 25, question: "仏教において、苦しみを滅ぼし、悟りに至るための8つの正しい実践方法を何と呼ぶ？", answers: ["八正道"] },
-                { id: 26, question: "仏教が最終的な目標とする、迷いや苦しみから完全に解放された状態を何と呼ぶ？", answers: ["輪廻からの解脱"] },
-                { id: 27, question: "ヴァルダマーナが開いたジャイナ教が、解脱の方法として重視する実践は何？", answers: ["苦行"] },
-                { id: 28, question: "ジャイナ教の信者が厳格に守る、生き物を傷つけないという戒律を何と呼ぶ？", answers: ["不殺生の徹底"] },
-                { id: 29, question: "バラモン教が民間信仰を取り入れて発展した、インドで最も多くの信者を持つ宗教は何？", answers: ["ヒンドゥー教"] },
-                { id: 30, question: "ヒンドゥー教の三大神の一つで、「破壊」を司る神は誰？", answers: ["シヴァ"] },
-                { id: 31, question: "ヒンドゥー教の三大神の一つで、「維持」を司る神は誰？", answers: ["ヴィシュヌ"] },
-                { id: 32, question: "ヒンドゥー教においても目標とされる、生まれ変わりの連鎖から解放されることを何と呼ぶ？", answers: ["輪廻からの解脱"] },
-                { id: 33, question: "ヒンドゥー教において、特定の神への絶対的な信仰によって解脱を目指す運動を何と呼ぶ？", answers: ["バクティ運動"] },
-                { id: 34, question: "紀元前4世紀にインドを初めて統一した王朝は何？", answers: ["マウリヤ朝"] },
-                { id: 35, question: "紀元前4世紀にインドに侵攻し、その後のインドの政治的統一に影響を与えたマケドニアの王は誰？", answers: ["アレクサンドロス大王"] },
-                { id: 36, question: "アレクサンドロス大王の西北インド侵攻後の混乱に乗じて、ナンダ朝を倒しマウリヤ朝を建国した人物は誰？", answers: ["チャンドラグプタ"] },
-                { id: 37, question: "マウリヤ朝の第3代の王で、武力による征服を悔い、仏教の保護と布教に努めたのは誰？", answers: ["アショーカ王"] },
-                { id: 38, question: "アショーカ王がダルマ（法）に基づく統治を進める中で、特に力を注いだ宗教政策を何と呼ぶ？", answers: ["仏教の保護・布教"] },
-                { id: 39, question: "アショーカ王が、自らの政治理念や仏教の教えを刻んで各地に建立した石の柱を何と呼ぶ？", answers: ["石柱碑"] },
-                { id: 40, question: "インドの国章のデザインにもなっている、アショーカ王が建てた石柱碑を何と呼ぶ？", answers: ["アショーカ王の石柱碑"] },
-                { id: 41, question: "アショーカ王の時代に盛んに造られた、仏陀の遺骨（仏舎利）を納めた半球状の建造物を何と呼ぶ？", answers: ["ストゥーパ", "仏塔"] },
-                { id: 42, question: "紀元1～3世紀に中央アジアから北西インドを支配し、東西交易の中継地として栄えたイラン系の王朝は何？", answers: ["クシャーナ朝"] },
-                { id: 43, question: "クシャーナ朝の最盛期を築き、仏教を篤く保護した王は誰？", answers: ["カニシカ王"] },
-                { id: 44, question: "カニシカ王が熱心に行った、仏教を支援し広める政策を何と呼ぶ？", answers: ["仏教を保護"] },
-                { id: 45, question: "個人の解脱を目指し、伝統的な戒律を厳格に守る仏教の部派を何と呼ぶ？", answers: ["上座部仏教"] },
-                { id: 46, question: "「大きな乗り物」を意味し、菩薩信仰を特徴として、すべての人々の救済を目指す仏教の新しい部派を何と呼ぶ？", answers: ["大乗仏教"] },
-                { id: 47, question: "インドの伝統美術にギリシア彫刻などのヘレニズム文化の影響が加わって生まれた仏教美術を何と呼ぶ？", "answers": ["ガンダーラ美術"] },
-                { id: 48, question: "アレクサンドロス大王の東方遠征によって、東方世界に広がったギリシア風の文化を何と呼ぶ？", answers: ["ヘレニズム文化"] },
-                { id: 49, question: "4世紀にチャンドラグプタ1世が建国し、北インドを統一した王朝は何？", answers: ["グプタ朝"] },
-                { id: 50, question: "グプタ朝の時代に公用語として用いられ、多くの文学作品が生み出された古代インドの言語は何？", answers: ["サンスクリット語"] },
-                { id: 51, question: "サンスクリット文学が栄え、ヒンドゥー教が確立するなど、グプタ朝の時代に花開いた文化を何と呼ぶ？", answers: ["インド古典文化"] },
-                { id: 52, question: "グプタ朝の時代にインドで発見され、数学の発展に大きく貢献した概念は何？", answers: ["ゼロの概念"] },
-                { id: 53, question: "グプタ朝の時代に、バラモン教と民間信仰が融合し、国民的な宗教として社会に広く根付いたのは何教？", answers: ["ヒンドゥー教"] },
-                { id: 54, question: "7世紀前半にハルシャ王がグプタ朝滅亡後の北インドを再統一して建てた王朝は何？", answers: ["ヴァルダナ朝"] },
-                { id: 55, question: "ヴァルダナ朝を建国し、仏教を篤く保護したことで知られる王は誰？", answers: ["ハルシャ王"] },
-                { id: 56, question: "ハルシャ王が熱心に行った、仏教を支援し広める政策を何と呼ぶ？", answers: ["仏教を保護"] },
-                { id: 57, question: "7世紀にインドを訪れ、ハルシャ王の保護を受けてナーランダー僧院で学んだ唐の僧は誰？", answers: ["玄奘"] },
-                { id: 58, question: "7世紀に海路でインドを訪れ、往復の様子を『南海寄帰内法伝』に記した唐の僧は誰？", answers: ["義浄"] },
-                { id: 59, question: "唐の僧、義浄が著した、インドや東南アジアの仏教の戒律や教団の様子を記した旅行記は何？", answers: ["『南海寄帰内法伝』", "南海寄帰内法伝"] }
+                { question: "優美だ。風流だ。上品だ。(やー)", answer: "やさし", kanji: "" },
+                { question: "けなげだ。殊勝だ。感心だ。", answer: "やさし", kanji: "" },
+                { question: "すぐれている。すばらしい。", answer: "いうなり", kanji: "" },
+                { question: "優美だ。風流だ。上品だ。(いー)", answer: "いうなり", kanji: "" },
+                { question: "優美だ。優雅だ。しっとりと上品だ。", answer: "なまめかし", kanji: "" },
+                { question: "風流だ。物好きだ。", answer: "すきずきし", kanji: "" },
+                { question: "色好みだ。浮気だ。好色だ。", answer: "すきずきし", kanji: "" },
+                { question: "風情がある。由緒ありげだ。", answer: "ゆゑゆゑし", kanji: "" },
+                { question: "《ふるまいなどが》物慣れている。洗練されている。", answer: "らうらうじ", kanji: "" },
+                { question: "《容姿などが》気品がある。上品だ。", answer: "らうらうじ", kanji: "" },
+                { question: "風情を解する。分別がある。思いやりがある。", answer: "こころあり", kanji: "" },
+                { question: "詩歌管弦の遊び。狩り。行楽。", answer: "あそび", kanji: "" },
+                { question: "口ずさむ。朗詠する。言葉を口に出して言う。", answer: "うちいづ", kanji: "" },
+                { question: "筆跡。字。", answer: "て", kanji: "" },
+                { question: "曲。演奏法。", answer: "て", kanji: "" },
+                { question: "幼い。あどけない。幼稚だ。", answer: "いはけなし", kanji: "" },
+                { question: "道理に合わない。無理だ。", answer: "わりなし", kanji: "" },
+                { question: "耐えがたい。つらい。", answer: "わりなし", kanji: "" },
+                { question: "どうしようもない。やむをえない。", answer: "わりなし", kanji: "" },
+                { question: "並々でない。はなはだしい。", answer: "わりなし", kanji: "" },
+                { question: "大げさだ。仰々しい。ひどい。", answer: "おどろおどろし", kanji: "" },
+                { question: "不気味だ。騒々しい。", answer: "おどろおどろし", kanji: "" },
+                { question: "平気だ。平然としている。素知らぬふりをしている。", answer: "つれなし", kanji: "" },
+                { question: "冷淡だ。薄情だ。", answer: "つれなし", kanji: "" },
+                { question: "何の変化もない。もとのままだ。", answer: "つれなし", kanji: "" },
+                { question: "整っている。きちんとしている。端正だ。", answer: "うるはし", kanji: "" },
+                { question: "正式だ。折り目正しい。", answer: "うるはし", kanji: "" },
+                { question: "大人らしい。大人びている。", answer: "おとなし", kanji: "" },
+                { question: "思慮分別がある。中心的な立場にある。", answer: "おとなし", kanji: "" },
+                { question: "場所が狭い。(物が)たくさんある。", answer: "ところせし", kanji: "" },
+                { question: "窮屈だ。気づまりだ。", answer: "ところせし", kanji: "" },
+                { question: "堂々としている。仰々しい。", answer: "ところせし", kanji: "" },
+                { question: "薄情だ。冷淡だ。思いやりがない。", answer: "つらし", kanji: "" },
+                { question: "うらめしい。たえられない。つらい。", answer: "つらし", kanji: "" },
+                { question: "気が引ける。気恥ずかしい。", answer: "つつまし", kanji: "" },
+                { question: "恐ろしい", answer: "かしこし", kanji: "" },
+                { question: "おそれ多い。もったいない。尊い。", answer: "かしこし", kanji: "" },
+                { question: "すぐれている。利口だ。", answer: "かしこし", kanji: "" },
+                { question: "はなはだしく。", answer: "かしこし", kanji: "" },
+                { question: "もの足りない。心さみしい。つまらない。", answer: "さうざうし", kanji: "" },
+                { question: "ふさわしい。似つかわしい。似合う。", answer: "つきづきし", kanji: "" },
+                { question: "もっともらしい。", answer: "つきづきし", kanji: "" },
+                { question: "ふさわしくない。似つかわしくない。似合わない。", answer: "つきなし", kanji: "" },
+                { question: "不愉快だ。目障りだ。気に食わない。", answer: "ものし", kanji: "" },
+                { question: "無礼だ。不作法だ。", answer: "なめし", kanji: "" },
+                { question: "すばらしい。立派だ。", answer: "めでたし", kanji: "" },
+                { question: "かわいそうだ。気の毒だ。", answer: "いとほし", kanji: "" },
+                { question: "かわいい。いとしい。", answer: "いとほし", kanji: "" },
+                { question: "ものさびしい。恐ろしい。寒々としている。", answer: "すごし", kanji: "" },
+                { question: "気に食わない。しゃくにさわる。", answer: "めざまし", kanji: "" },
+                { question: "意外と素晴らしい。思いがけず立派だ。", answer: "めざまし", kanji: "" },
+                { question: "不快だ。うっとうしい。", answer: "むつかし", kanji: "" },
+                { question: "わずらわしい。やっかいだ。面倒だ。", answer: "むつかし", kanji: "" },
+                { question: "気味悪い。", answer: "むつかし", kanji: "" }
             ]
         };
 
@@ -466,14 +602,27 @@
             return array;
         }
 
-        function normalizeAnswer(str) {
+        // 解答の正規化（モードによって処理を変える）
+        function normalizeAnswer(str, mode) {
             if (typeof str !== 'string') return '';
-            return str.trim().toLowerCase()
-                .replace(/[Ａ-Ｚａ-ｚ０-９．＝－（）『』]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)) // Full-width to half-width
-                .replace(/　/g, ' ') // Full-width space
+            
+            // 全角文字を半角に変換
+            let normalized = str.trim()
+                .replace(/[Ａ-Ｚａ-ｚ０-９．＝－（）『』]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+                .replace(/　/g, ' ') // 全角スペースを半角に
                 .replace(/[〜～]/g, '-') 
-                .replace(/＝/g, '=')
-                .replace(/ /g, ''); // remove spaces
+                .replace(/＝/g, '=');
+
+            // 英語モード以外なら、すべてのスペースを削除（日本語入力の揺らぎ吸収）
+            // 英語モードなら、単語間のスペースは重要なので残す（ただし前後の空白はtrim済み）
+            if (mode !== 'english') {
+                normalized = normalized.replace(/ /g, '');
+            } else {
+                // 英語の場合は小文字化するが、内部のスペースは維持する
+                normalized = normalized.toLowerCase();
+            }
+
+            return normalized;
         }
 
         // --- Modal ---
@@ -537,7 +686,7 @@
         }
 
         function resetHistory(mode) {
-            const modeTitleMap = { english: '英単語', public: '公共', kobun: '古文単語', worldHistory1: '世界史①', worldHistory2: '世界史②' };
+            const modeTitleMap = { english: '英単語', public: '公共', kobun: '古文単語' };
             const modeTitle = modeTitleMap[mode] || 'クイズ';
             const message = `${modeTitle}の学習履歴をすべてリセットしますか？`;
             showConfirmModal(message, () => {
@@ -568,8 +717,6 @@
                     body = unlearnedItems.map(item => `"${item.question}","${item.answer}","${item.kanji || ''}"`).join('\r\n');
                     break;
                 case 'public':
-                case 'worldHistory1':
-                case 'worldHistory2':
                     headers = "問題,解答\r\n";
                     body = unlearnedItems.map(item => `"${item.question}","${item.answers.join(' / ')}"`).join('\r\n');
                     break;
@@ -668,7 +815,7 @@
                 return;
             }
             const currentItem = quizItems[currentQuestionIndex];
-            const modeTitleMap = { english: '英単語クイズ', public: '公共テスト', kobun: '古文単語クイズ', worldHistory1: '世界史①', worldHistory2: '世界史②' };
+            const modeTitleMap = { english: '英単語クイズ', public: '公共テスト', kobun: '古文単語クイズ' };
             quizTitle.textContent = modeTitleMap[currentQuizMode];
             questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${quizItems.length}`;
             questionText.textContent = currentItem.question;
@@ -693,11 +840,12 @@
 
             if (currentQuizMode === 'english' || currentQuizMode === 'kobun') {
                 correctAnswersText = currentItem.answer;
-                isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswersText);
-            } else { // public or worldHistory1/2
+                // ここでモードごとの正規化を適用
+                isCorrect = normalizeAnswer(userAnswer, currentQuizMode) === normalizeAnswer(correctAnswersText, currentQuizMode);
+            } else { // public
                 correctAnswersText = currentItem.answers.join(' / ');
-                const normalizedUserAnswer = normalizeAnswer(userAnswer);
-                isCorrect = currentItem.answers.some(ans => normalizeAnswer(ans) === normalizedUserAnswer);
+                const normalizedUserAnswer = normalizeAnswer(userAnswer, currentQuizMode);
+                isCorrect = currentItem.answers.some(ans => normalizeAnswer(ans, currentQuizMode) === normalizedUserAnswer);
             }
             
             const itemId = currentItem.id;
@@ -741,7 +889,7 @@
                 const listItem = document.createElement('div');
                 listItem.className = 'results-list-item';
                 const question = item.question;
-                const answer = (currentQuizMode === 'public' || currentQuizMode === 'worldHistory1' || currentQuizMode === 'worldHistory2') ? item.answers.join(' / ') : item.answer;
+                const answer = (currentQuizMode === 'public') ? item.answers.join(' / ') : item.answer;
                 listItem.innerHTML = `
                     <span class="text-secondary w-2/3 truncate">${question}</span>
                     <span class="font-bold w-1/3 text-right">${answer}</span>`;
@@ -759,30 +907,15 @@
 
         // --- Initialization and Event Listeners ---
         function initializeAllData() {
-            // Process English
-            const wordMap = new Map();
-            DATA_SETS.english.forEach(item => {
-                const key = item.answer.toLowerCase();
-                if (wordMap.has(key)) { wordMap.get(key).question += `；${item.question}`; } 
-                else { wordMap.set(key, { ...item }); }
-            });
-            allData.english = Array.from(wordMap.values()).map((item, index) => ({ ...item, id: index }));
+            // Process English (Simple array)
+            allData.english = DATA_SETS.english.map((item, index) => ({ ...item, id: index }));
 
             // Process Public Affairs
             allData.public = DATA_SETS.public.map(q => ({...q}));
             
             // Process Kobun
-            const kobunMap = new Map();
-            DATA_SETS.kobun.forEach(item => {
-                const key = `${item.answer}-${item.question}`;
-                if (!kobunMap.has(key)) { kobunMap.set(key, { ...item }); }
-            });
-            allData.kobun = Array.from(kobunMap.values()).map((item, index) => ({ ...item, id: index }));
+            allData.kobun = DATA_SETS.kobun.map((item, index) => ({ ...item, id: index }));
             
-            // Process World History 1 & 2
-            allData.worldHistory1 = DATA_SETS.worldHistory1.map((q, index) => ({ ...q, id: q.id || index }));
-            allData.worldHistory2 = DATA_SETS.worldHistory2.map((q, index) => ({ ...q, id: q.id || index }));
-
             // Load mastery from localStorage for all modes
             Object.keys(DATA_SETS).forEach(mode => {
                 const data = allData[mode];
@@ -799,7 +932,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             initializeAllData();
             
-            const titleMap = { english: '英単語クイズ', public: '公共テスト', kobun: '古文単語クイズ', worldHistory1: '世界史①', worldHistory2: '世界史②' };
+            const titleMap = { english: '英単語クイズ', public: '公共テスト', kobun: '古文単語クイズ' };
             Object.keys(DATA_SETS).forEach(mode => createStartScreen(mode, titleMap[mode]));
 
             document.body.addEventListener('click', (e) => {
@@ -863,4 +996,3 @@
     </script>
 </body>
 </html>
-
